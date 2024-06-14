@@ -1,0 +1,18 @@
+package org.firstinspires.ftc.teamcode.commandBase.command.teleopcommand.sequentialcommands;
+
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+
+import org.firstinspires.ftc.teamcode.Subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.FlapperCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.IntakeMotorCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.IntakeServoCommand;
+
+public class IntakePixel extends ParallelCommandGroup {
+    public IntakePixel(IntakeSubsystem Intake, IntakeSubsystem.IntakeServoState stackState , IntakeSubsystem.RollerIntakeState rollerState) {
+        super(
+                new FlapperCommand(Intake, IntakeSubsystem.FlappersState.FLAPPER_CLOSE), // Flapper Close
+                new IntakeServoCommand(Intake,stackState), //  Intake Motor Start
+                new IntakeMotorCommand(Intake, rollerState) // Stack Servo down
+        );
+    }
+}

@@ -1,0 +1,303 @@
+package org.firstinspires.ftc.teamcode.opmode;
+
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.Subsystem.ElevatorSubsytem;
+import org.firstinspires.ftc.teamcode.Subsystem.ExtensionSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystem.OutakeSubsystem;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ElevatorCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ExtensionCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.FlapperCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.GripperCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.RotateCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ShoulderCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.SwitchPixelCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.teleopcommand.sequentialcommands.DropSeq;
+import org.firstinspires.ftc.teamcode.commandBase.command.teleopcommand.sequentialcommands.IntakePixel;
+import org.firstinspires.ftc.teamcode.commandBase.command.teleopcommand.sequentialcommands.IntakePosSeq;
+import org.firstinspires.ftc.teamcode.commandBase.command.teleopcommand.sequentialcommands.TransferSeq;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.Globals;
+import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
+
+import java.security.cert.Extension;
+
+@TeleOp
+@Config
+
+
+public class ParasTeleop extends CommandOpMode {
+
+    public IntakeSubsystem Intake = null;
+    public OutakeSubsystem Outtake = null;
+    public ElevatorSubsytem Elevator = null;
+
+    public ExtensionSubsystem Extension = null;
+
+    public static int ElevatorPOs;
+    public int counter =0;
+    public int[] LifterStates={1,2,3,4,5,6,7,8,9};  //Use this for counter
+    public int lifterCounter=1;
+    public static int  droneShoot;
+    public static  int droneCnt=0;
+    public static boolean pixelDrop = FALSE;
+    SampleMecanumDrive drive = null;
+    private final RobotHardware robot = RobotHardware.getInstance();   //Robot instance
+
+    boolean PixelIntake = TRUE;
+    public static int dropHeightOne = 0;
+    public static boolean extensionFlag = FALSE;
+    public GamepadEx gamepadEx;
+
+    @Override
+    public void initialize() {
+
+        CommandScheduler.getInstance().reset();
+
+        robot.init(hardwareMap,telemetry);
+        drive = new SampleMecanumDrive(hardwareMap);
+        Intake = new IntakeSubsystem(robot);
+        Outtake = new OutakeSubsystem(robot);
+        Elevator = new ElevatorSubsytem(robot);
+        Extension = new ExtensionSubsystem(robot);
+
+        gamepadEx=new GamepadEx(gamepad1);
+
+
+        //// TODO ================================================== INIT ================================================
+        while(opModeInInit()){
+            schedule( new IntakePosSeq(Outtake, Intake));
+            Extension(0,1);
+        }
+    }
+
+    @Override
+    public  void run()
+    {
+        super.run();
+
+        // TODO ============================================ Ground Level Intake ===========================================================
+        gamepadEx.getGamepadButton(GamepadKeys.Button.B).toggleWhenPressed(
+                new InstantCommand(()->{schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON));}),
+                new InstantCommand(()->{schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_UP, IntakeSubsystem.RollerIntakeState.INTAKE_OFF));})
+        );
+
+
+       // TODO ============================================ Outtake ===========================================================
+      // Transferring the pixel when colour sensor gets active
+
+        if((robot.sensorColor1.red()>=1500 || robot.sensorColor1.blue()>=1500 || robot.sensorColor1.green()>=1500) && (robot.sensorColor2.red()>=1500 || robot.sensorColor2.blue()>=1500 || robot.sensorColor2.green()>=1500) ){
+
+            if(extensionFlag==TRUE){
+                schedule( new TransferSeq(Intake, Outtake, Elevator));
+            }
+
+        }
+
+        //////// Transferring logic ends
+
+        if(gamepad1.left_bumper)
+        {
+            schedule(new DropSeq(Intake,Outtake));
+        }
+
+        // TODO ============================================ Intake Position ===========================================================
+        if(gamepad1.right_bumper)
+        {
+            schedule( new IntakePosSeq(Outtake, Intake));
+        }
+
+        // TODO ============================================ Both Pixel Drop ===========================================================
+        if(gamepad1.right_trigger>0)
+        {
+            schedule( new GripperCommand(Outtake, OutakeSubsystem.GripperState.GRIP_OPEN));
+        }
+
+        // TODO ============================================ Reverse Intake ===========================================================
+        if(gamepad1.left_trigger>0)
+        {
+            Intake.rollOutside(0.6);
+        }
+
+//        // TODO ============================================ Drone Shoot ===========================================================
+//        if(gamepad1.back)
+//        {
+//            // Press back double time
+//            if(droneCnt>1)
+//            {
+//                robot.droneLock.setPosition(droneShoot);
+//            }
+//            else {
+//                droneCnt++;
+//            }
+//        }
+//
+//        // TODO ============================================ Single Pixel Drop ===========================================================
+//        if(gamepad1.y)
+//        {
+//            // Toggle Button to Drop Single Pixel
+//            if(!pixelDrop)
+//            {
+//                schedule(new GripperCommand(Outtake, OutakeSubsystem.GripperState.GRIP_LEFT_OPEN));
+//                pixelDrop = TRUE;
+//            }
+//            else
+//            {
+//                schedule(new GripperCommand(Outtake, OutakeSubsystem.GripperState.GRIP_RIGHT_OPEN));
+//                pixelDrop = FALSE;
+//            }
+//        }
+        //// TODO Toggle Logic
+        gamepadEx.getGamepadButton(GamepadKeys.Button.Y).toggleWhenPressed(
+                new InstantCommand(()->{schedule( new GripperCommand(Outtake, OutakeSubsystem.GripperState.GRIP_LEFT_OPEN));}),
+                new InstantCommand(()->{schedule(new GripperCommand(Outtake, OutakeSubsystem.GripperState.GRIP_RIGHT_OPEN));})
+        );
+//
+//        // TODO ============================================ Hanging ===========================================================
+//        if(gamepad1.x)
+//        {
+//            // Hang position
+//            schedule( new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HANGERPOS, dropHeightOne));
+//        }
+//        if(gamepad1.a)
+//        {
+//            // Hang
+//            schedule( new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HANG, dropHeightOne));
+//        }
+
+        // TODO ============================================ X Extension  ===========================================================
+        if(gamepad1.x)
+        {
+            // Hang position
+            schedule( new ExtensionCommand(Extension, ExtensionSubsystem.IntakeExtensionState.INIT));
+            sleep(2000);
+            extensionFlag = TRUE;
+        }
+        if(gamepad1.a)
+        {
+            // Hang
+            schedule( new ExtensionCommand(Extension, ExtensionSubsystem.IntakeExtensionState.Extend));
+            extensionFlag = FALSE;
+        }
+        //
+//        // TODO ============================================ Elevator Height  ===========================================================
+//        if(gamepad1.dpad_up)
+//        {
+//            if(lifterCounter<9)
+//            {
+//                lifterCounter++;
+//
+//                if (LifterStates[lifterCounter - 1] == 1) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.ONE,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 2) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.TWO,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 3) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.THREE,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 4) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.FOUR,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 5) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.FIVE,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 6) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.SIX,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 7) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.SEVEN,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 8) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.EIGHT,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 9) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.NINE,dropHeightOne));
+//                }
+//            }
+//        }
+//
+//        else if(gamepad1.dpad_down)
+//        {
+//            if(lifterCounter>1)
+//            {
+//                lifterCounter--;
+//
+//                if (LifterStates[lifterCounter - 1] == 1) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.ONE,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 2) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.TWO,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 3) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.THREE,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 4) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.FOUR,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 5) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.FIVE,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 6) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.SIX,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 7) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.SEVEN,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 8) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.EIGHT,dropHeightOne));
+//                }
+//                else if (LifterStates[lifterCounter - 1] == 9) {
+//                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.NINE,dropHeightOne));
+//                }
+//            }
+//
+//
+//        }
+//
+
+        // TODO ============================================ Drive ===========================================================
+        drive.setWeightedDrivePower(
+                new Pose2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
+                        -gamepad1.right_stick_x
+                )
+        );
+
+        drive.update();
+
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        telemetry.addData("x", poseEstimate.getX());
+        telemetry.addData("y", poseEstimate.getY());
+
+    }
+
+    public void setServoShoulder(double leftPos){    //Todo add servo offset if needed.
+        double rightPos=1-leftPos;
+        robot.leftShoulder.setPosition(leftPos);
+        robot.rightShoulder.setPosition(rightPos);
+    }
+
+    public void Extension(int ExtendVal, double pow)
+    {
+        robot.IntakeExtensionLeft.setTargetPosition(ExtendVal);
+        robot.IntakeExtensionLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.IntakeExtensionLeft.setPower(pow);
+    }
+
+
+}
