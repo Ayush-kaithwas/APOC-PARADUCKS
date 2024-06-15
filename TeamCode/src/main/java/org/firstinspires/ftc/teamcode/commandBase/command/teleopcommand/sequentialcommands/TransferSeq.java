@@ -22,25 +22,68 @@ public class TransferSeq extends SequentialCommandGroup {
     public TransferSeq(IntakeSubsystem Intake, OutakeSubsystem Outake, ElevatorSubsytem elevate) {
         super(
 
-                new GripperCommand(Outake, OutakeSubsystem.GripperState.GRIP_SAFE),
                 new IntakeServoCommand(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN),
-                new FlapperCommand(Intake, IntakeSubsystem.FlappersState.FLAPPER_OPEN),
-                new ElevatorCommand(elevate, ElevatorSubsytem.ElevateState.HOME, 0),
+                new ShoulderCommand(Outake,OutakeSubsystem.ShoulderState.SAFEPICK),
                 new SwitchPixelCommand(Outake, OutakeSubsystem.SwitchPixelState.SWITCH_INIT),
+                new WaitCommand(250),
+                new FlapperCommand(Intake, IntakeSubsystem.FlappersState.FLAPPER_OPEN),
+                new WaitCommand(200),
+                new GripperCommand(Outake, OutakeSubsystem.GripperState.GRIP_SAFE),
+                new ElevatorCommand(elevate, ElevatorSubsytem.ElevateState.HOME, 0),
                 new RotateCommand(Outake, OutakeSubsystem.RotateState.PICK),
+                new WaitCommand(250),
+                new ShoulderCommand(Outake,OutakeSubsystem.ShoulderState.INIT),
                 new ArmCommand(Outake,OutakeSubsystem.ArmState.SAFEPICK),
                 new WaitCommand(300),
                 new WaitCommand(150).andThen(new ArmCommand(Outake,OutakeSubsystem.ArmState.PICK)),
-                new ShoulderCommand(Outake,OutakeSubsystem.ShoulderState.SAFEPICK),
-                new WaitCommand(250),
+                new WaitCommand(150),
                 new ShoulderCommand(Outake,OutakeSubsystem.ShoulderState.PICK),
                 new WaitCommand(1250).andThen(new GripperCommand(Outake, OutakeSubsystem.GripperState.GRIP_CLOSE))
+
+
+//                new IntakeServoCommand(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN),
+//                new ShoulderCommand(Outake,OutakeSubsystem.ShoulderState.SAFEPICK),
+//                new SwitchPixelCommand(Outake, OutakeSubsystem.SwitchPixelState.SWITCH_INIT),
+//                new WaitCommand(250),
+//                new FlapperCommand(Intake, IntakeSubsystem.FlappersState.FLAPPER_OPEN),
+//                new WaitCommand(200),
+//                new GripperCommand(Outake, OutakeSubsystem.GripperState.GRIP_SAFE),
+//                new ElevatorCommand(elevate, ElevatorSubsytem.ElevateState.HOME, 0),
+//                new RotateCommand(Outake, OutakeSubsystem.RotateState.PICK),
+//                new ArmCommand(Outake,OutakeSubsystem.ArmState.SAFEPICK),
+//                new WaitCommand(300),
+//                new WaitCommand(150).andThen(new ArmCommand(Outake,OutakeSubsystem.ArmState.PICK)),
+//                new WaitCommand(150),
+//                new WaitCommand(150).andThen(new ShoulderCommand(Outake,OutakeSubsystem.ShoulderState.SAFEPICK1)),
+//                new WaitCommand(150),
+//                new ShoulderCommand(Outake,OutakeSubsystem.ShoulderState.PICK),
+//                new WaitCommand(1250).andThen(new GripperCommand(Outake, OutakeSubsystem.GripperState.GRIP_CLOSE))
+
         );
     }
 }
 
 //////////////// TODO PICKING POSITIONS
 /*
+
+OG WOrking
+     new IntakeServoCommand(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN),
+                new ShoulderCommand(Outake,OutakeSubsystem.ShoulderState.SAFEPICK),
+                new SwitchPixelCommand(Outake, OutakeSubsystem.SwitchPixelState.SWITCH_INIT),
+                new WaitCommand(250),
+                new FlapperCommand(Intake, IntakeSubsystem.FlappersState.FLAPPER_OPEN),
+                new WaitCommand(200),
+                new GripperCommand(Outake, OutakeSubsystem.GripperState.GRIP_SAFE),
+                new ElevatorCommand(elevate, ElevatorSubsytem.ElevateState.HOME, 0),
+                new RotateCommand(Outake, OutakeSubsystem.RotateState.PICK),
+                new ArmCommand(Outake,OutakeSubsystem.ArmState.SAFEPICK),
+                new WaitCommand(300),
+                new WaitCommand(150).andThen(new ArmCommand(Outake,OutakeSubsystem.ArmState.PICK)),
+                new WaitCommand(250),
+                new ShoulderCommand(Outake,OutakeSubsystem.ShoulderState.PICK),
+                new WaitCommand(1250).andThen(new GripperCommand(Outake, OutakeSubsystem.GripperState.GRIP_CLOSE))
+
+
  * Rotate = 0.5
  * Flapper = 0.54 // Change
  * Left Grip = 0.705

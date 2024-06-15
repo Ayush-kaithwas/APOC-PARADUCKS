@@ -33,52 +33,19 @@ import java.security.cert.Extension;
 
 @TeleOp
 @Config
-
-
-public class Test extends CommandOpMode {
+public class ElevatorTesting extends CommandOpMode {
 
     public IntakeSubsystem intake = null;
     public OutakeSubsystem outtake = null;
     public ElevatorSubsytem elevator = null;
-
-    public ExtensionSubsystem extension = null;
-
-    public static int ElevatorPOs;
-    public int counter =0;
-    public int[] LifterStates={1,2,3,4,5,6,7,8,9};  //Use this for counter
-    public int lifterCounter=1;
-    public static int  droneShoot;
-    public static  int droneCnt=0;
-    public static boolean pixelDrop = FALSE;
-    SampleMecanumDrive drive = null;
     private final RobotHardware robot = RobotHardware.getInstance();   //Robot instance
-
-    boolean PixelIntake = TRUE;
-    public static int dropHeightOne = 0;
 
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
 
         robot.init(hardwareMap,telemetry);
-        drive = new SampleMecanumDrive(hardwareMap);
-        intake = new IntakeSubsystem(robot);
-        outtake = new OutakeSubsystem(robot);
         elevator = new ElevatorSubsytem(robot);
-        extension = new ExtensionSubsystem(robot);
-
-
-
-        robot.flappers.setPosition(Globals.flapperClose);
-        sleep(200);
-        robot.stackServo.setPosition(Globals.stackInit);
-        sleep(150);
-        robot.Arm.setPosition(Globals.ArmInit);
-        setServoShoulder(Globals.shoulderInit);
-        robot.rotate.setPosition(Globals.rotateInit);
-        robot.switchPixel.setPosition(Globals.switchPixelInit);
-
-
 
     }
 
@@ -86,73 +53,18 @@ public class Test extends CommandOpMode {
     public  void run()
     {
         super.run();
-        if(gamepad2.start){
-            schedule( new TransferSeq(intake, outtake, elevator));
-        }
 
-        if(gamepad1.b)
-        {
-            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON)); // Intaking the Pixel From ground
-        }
-        else if (gamepad1.a)
-        {
-            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_OFF));
-        }
-        else if (gamepad1.right_trigger>0) {
-            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.PIXEL_OUT)); // Intaking the Pixel From ground
 
-        } else if(gamepad1.left_bumper){
-            schedule(new DropSeq(intake,outtake));
-        }
-        else if(gamepad1.x){
-            robot.flappers.setPosition(Globals.flapperClose);
-        }
-        else if(gamepad1.y){
-            schedule(new GripperCommand(outtake, OutakeSubsystem.GripperState.GRIP_OPEN));
-        }
-        else if(gamepad1.right_bumper)
-        {
-            robot.stackServo.setPosition(Globals.stackFive);
-        }
-        else if(gamepad1.left_trigger>0){
-            robot.stackServo.setPosition(Globals.stackFour);
-        }
-        else if(gamepad1.start){
-            robot.stackServo.setPosition(Globals.stackThree);
-        }
-        else if(gamepad1.back){
-            robot.stackServo.setPosition(Globals.stackDown);
-        }
-
-        else if(gamepad1.dpad_up)
+        if(gamepad1.dpad_up)
         {
             inc(0.7);
         }
         else if(gamepad1.dpad_down){
             dec(0.7);
         }
-
-        else if(gamepad2.left_bumper){
-            schedule( new ExtensionCommand(extension, ExtensionSubsystem.IntakeExtensionState.INIT));
-        }
-        else if(gamepad2.right_bumper){
-            schedule( new ExtensionCommand(extension, ExtensionSubsystem.IntakeExtensionState.Extend));
-        }
-        // TODO ============================================ Drive ===========================================================
-        drive.setWeightedDrivePower(
-                new Pose2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
-                        -gamepad1.right_stick_x
-                )
-        );
-
-        drive.update();
-
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("x", poseEstimate.getX());
-        telemetry.addData("y", poseEstimate.getY());
-
+        telemetry.addData("Left Elevator POS",robot.leftElevator.getCurrentPosition());
+        telemetry.addData("Right Elevator Pos",robot.rightElevator.getCurrentPosition());
+        telemetry.update();
     }
 
     public void setServoShoulder(double leftPos){    //Todo add servo offset if needed.

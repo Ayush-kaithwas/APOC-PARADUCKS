@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Subsystem.ElevatorSubsytem;
 import org.firstinspires.ftc.teamcode.Subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystem.IntakeSubsystem;
@@ -28,7 +29,8 @@ public class Colorsensor extends CommandOpMode {
 
 
     private final RobotHardware robot = RobotHardware.getInstance();   //Robot instance
-    public int Threshold=1500;
+    public int ThresholdColor=1000;
+    public int ThresholdDistance=15;
 
     public IntakeSubsystem intake = null;
     public OutakeSubsystem outtake = null;
@@ -69,7 +71,8 @@ public class Colorsensor extends CommandOpMode {
     public  void run()
     {
         super.run();
-        if((robot.sensorColor1.red()>=1500 || robot.sensorColor1.blue()>=1500 || robot.sensorColor1.green()>=1500) && (robot.sensorColor2.red()>=1500 || robot.sensorColor2.blue()>=1500 || robot.sensorColor2.green()>=1500) ){
+        if(((robot.sensorColor1.red()>=ThresholdColor || robot.sensorColor1.blue()>=ThresholdColor || robot.sensorColor1.green()>=ThresholdColor ) && robot.sensorColor1.getDistance(DistanceUnit.MM)<=ThresholdDistance)
+                && ((robot.sensorColor2.red()>=ThresholdColor || robot.sensorColor2.blue()>=ThresholdColor || robot.sensorColor2.green()>=ThresholdColor) && robot.sensorColor2.getDistance(DistanceUnit.MM)<=ThresholdDistance)){
             schedule( new TransferSeq(intake, outtake, elevator));
         }
         if(gamepad1.b)

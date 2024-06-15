@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commandBase.command.teleopcommand.sequentialcommands;
 
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.Subsystem.IntakeSubsystem;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.RotateC
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ShoulderCommand;
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.SwitchPixelCommand;
 
-public class IntakePosSeq extends ParallelCommandGroup {
+public class IntakePosSeq extends SequentialCommandGroup {
     public IntakePosSeq(OutakeSubsystem Outake, IntakeSubsystem Intake) {
         super(
                 new FlapperCommand(Intake, IntakeSubsystem.FlappersState.FLAPPER_CLOSE),

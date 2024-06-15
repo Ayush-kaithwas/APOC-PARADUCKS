@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Subsystem.ElevatorSubsytem;
 import org.firstinspires.ftc.teamcode.Subsystem.ExtensionSubsystem;
@@ -57,7 +58,7 @@ public class ParasTeleop extends CommandOpMode {
     SampleMecanumDrive drive = null;
     private final RobotHardware robot = RobotHardware.getInstance();   //Robot instance
 
-    boolean PixelIntake = TRUE;
+    boolean PixelIntake = FALSE;
     public static int dropHeightOne = 0;
     public static boolean extensionFlag = FALSE;
     public GamepadEx gamepadEx;
@@ -73,13 +74,22 @@ public class ParasTeleop extends CommandOpMode {
         Outtake = new OutakeSubsystem(robot);
         Elevator = new ElevatorSubsytem(robot);
         Extension = new ExtensionSubsystem(robot);
-
         gamepadEx=new GamepadEx(gamepad1);
 
 
         //// TODO ================================================== INIT ================================================
-        while(opModeInInit()){
-            schedule( new IntakePosSeq(Outtake, Intake));
+
+        robot.flappers.setPosition(Globals.flapperClose);
+        sleep(200);
+        robot.stackServo.setPosition(Globals.stackInit);
+        sleep(150);
+        robot.Arm.setPosition(Globals.ArmInit);
+        setServoShoulder(Globals.shoulderInit);
+        robot.rotate.setPosition(Globals.rotateInit);
+        robot.switchPixel.setPosition(Globals.switchPixelInit);
+
+        while(opModeInInit())
+        {
             Extension(0,1);
         }
     }
@@ -90,24 +100,32 @@ public class ParasTeleop extends CommandOpMode {
         super.run();
 
         // TODO ============================================ Ground Level Intake ===========================================================
-        gamepadEx.getGamepadButton(GamepadKeys.Button.B).toggleWhenPressed(
-                new InstantCommand(()->{schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON));}),
-                new InstantCommand(()->{schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_UP, IntakeSubsystem.RollerIntakeState.INTAKE_OFF));})
-        );
+        if(gamepad1.b){
+            new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_UP, IntakeSubsystem.RollerIntakeState.INTAKE_OFF);
+        }
+
+        if(gamepad1.x){
+            schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_UP, IntakeSubsystem.RollerIntakeState.INTAKE_OFF));
+        }
 
 
        // TODO ============================================ Outtake ===========================================================
       // Transferring the pixel when colour sensor gets active
-
         if((robot.sensorColor1.red()>=1500 || robot.sensorColor1.blue()>=1500 || robot.sensorColor1.green()>=1500) && (robot.sensorColor2.red()>=1500 || robot.sensorColor2.blue()>=1500 || robot.sensorColor2.green()>=1500) ){
+            PixelIntake = TRUE;
+            schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_UP, IntakeSubsystem.RollerIntakeState.INTAKE_OFF));
+        }
 
-            if(extensionFlag==TRUE){
-                schedule( new TransferSeq(Intake, Outtake, Elevator));
-            }
-
+        if(extensionFlag==TRUE && PixelIntake == TRUE){
+            schedule( new TransferSeq(Intake, Outtake, Elevator));
+            PixelIntake = FALSE;
         }
 
         //////// Transferring logic ends
+        if(gamepad2.start) // Forcefully Executing the Transfer Sequence
+        {
+            schedule(new TransferSeq(Intake, Outtake, Elevator));
+        }
 
         if(gamepad1.left_bumper)
         {
@@ -170,7 +188,7 @@ public class ParasTeleop extends CommandOpMode {
 //        if(gamepad1.x)
 //        {
 //            // Hang position
-//            schedule( new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HANGERPOS, dropHeightOne));
+            schedule( new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HANGERPOS, dropHeightOne));
 //        }
 //        if(gamepad1.a)
 //        {

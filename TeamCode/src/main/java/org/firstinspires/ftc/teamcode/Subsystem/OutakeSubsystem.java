@@ -30,6 +30,8 @@ public class OutakeSubsystem {
     public enum ShoulderState{
         PICK,
         SAFEPICK,
+        SAFEPICK1,
+        SAFEPICK2,
         PREPICK,
         DROP,
         SAFEDROP,
@@ -101,6 +103,14 @@ public class OutakeSubsystem {
             case SAFEPICK:
                 outakeState=OutakeState.LOW;
                 setServoShoulder(Globals.shoulderSafePick);
+                break;
+                case SAFEPICK1:
+                outakeState=OutakeState.LOW;
+                setServoShoulder(Globals.shoulderSafePick1);
+                break;
+                case SAFEPICK2:
+                outakeState=OutakeState.LOW;
+                setServoShoulder(Globals.shoulderSafePick2);
                 break;
             case PREPICK:
                 outakeState=OutakeState.LOW;

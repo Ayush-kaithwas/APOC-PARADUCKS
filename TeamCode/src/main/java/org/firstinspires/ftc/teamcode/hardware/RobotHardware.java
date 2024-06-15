@@ -1,21 +1,11 @@
 package org.firstinspires.ftc.teamcode.hardware;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServoImplEx;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import javax.annotation.concurrent.GuardedBy;
 
 public class RobotHardware {
     //Todo ======================================================== Intake Actuators ===================================================================
@@ -51,8 +41,10 @@ public class RobotHardware {
 
     //Todo ========================================================= Drone Servo ===================================================================
     public Servo droneLock=null;
-    public ColorSensor sensorColor1;
-    public ColorSensor sensorColor2;
+
+    //Todo ========================================================= Color Sensor ===================================================================
+    public RevColorSensorV3 sensorColor1;
+    public RevColorSensorV3 sensorColor2;
 
 
     //Todo ========================================================= Robot Setup ===================================================================
@@ -106,13 +98,15 @@ public class RobotHardware {
 
 
         //Todo ========================================================= Color Sensor ===================================================================
-        sensorColor1 = hardwareMap.get(ColorSensor.class, "cs1");
-        sensorColor2 = hardwareMap.get(ColorSensor.class, "cs2");
+        sensorColor1 = hardwareMap.get(RevColorSensorV3.class, "cs1");
+        sensorColor2 = hardwareMap.get(RevColorSensorV3.class, "cs2");
 
         //Todo ========================================================= Setting Mode for all the Actuators ===================================================================
         leftElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         IntakeExtensionLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 }
