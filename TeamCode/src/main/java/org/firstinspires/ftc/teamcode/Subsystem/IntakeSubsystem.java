@@ -74,13 +74,13 @@ public class IntakeSubsystem extends SubsystemBase {
         this.rollerIntakeState=state;
         switch(state){
             case INTAKE_ON:
-                intakeStart(-0.55);//0.8
+                intakeStart(-0.7);//0.8
                 break;
             case INTAKE_OFF:
                 intakeStop();
                 break;
             case PIXEL_OUT:
-                rollOutside(-0.55);
+                rollOutside(-0.7);
                 break;
         }
     }

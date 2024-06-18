@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Subsystem.ElevatorSubsytem;
 import org.firstinspires.ftc.teamcode.Subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystem.IntakeSubsystem;
@@ -52,8 +53,9 @@ public class Test extends CommandOpMode {
     public static boolean pixelDrop = FALSE;
     SampleMecanumDrive drive = null;
     private final RobotHardware robot = RobotHardware.getInstance();   //Robot instance
-
-    boolean PixelIntake = TRUE;
+    public int ThresholdColor=700;
+    public int ThresholdDistance=15;
+    boolean PixelIntake = FALSE;
     public static int dropHeightOne = 0;
 
     @Override
@@ -67,8 +69,6 @@ public class Test extends CommandOpMode {
         elevator = new ElevatorSubsytem(robot);
         extension = new ExtensionSubsystem(robot);
 
-
-
         robot.flappers.setPosition(Globals.flapperClose);
         sleep(200);
         robot.stackServo.setPosition(Globals.stackInit);
@@ -77,9 +77,6 @@ public class Test extends CommandOpMode {
         setServoShoulder(Globals.shoulderInit);
         robot.rotate.setPosition(Globals.rotateInit);
         robot.switchPixel.setPosition(Globals.switchPixelInit);
-
-
-
     }
 
     @Override
@@ -88,6 +85,24 @@ public class Test extends CommandOpMode {
         super.run();
         if(gamepad2.start){
             schedule( new TransferSeq(intake, outtake, elevator));
+        }
+        telemetry.addData("red1-",robot.sensorColor1.red());
+        telemetry.addData("blue1-",robot.sensorColor1.blue());
+        telemetry.addData("green1-",robot.sensorColor1.green());
+        telemetry.addData("red2-",robot.sensorColor2.red());
+        telemetry.addData("blue2-",robot.sensorColor2.blue());
+        telemetry.addData("green2-",robot.sensorColor2.green());
+        telemetry.addData("distance1-",robot.sensorColor1.getDistance(DistanceUnit.MM));
+        telemetry.addData("distance2-",robot.sensorColor2.getDistance(DistanceUnit.MM));
+
+        if(((robot.sensorColor1.red()>=ThresholdColor || robot.sensorColor1.blue()>=ThresholdColor || robot.sensorColor1.green()>=ThresholdColor ) && robot.sensorColor1.getDistance(DistanceUnit.MM)<=ThresholdDistance)
+                && ((robot.sensorColor2.red()>=ThresholdColor || robot.sensorColor2.blue()>=ThresholdColor || robot.sensorColor2.green()>=ThresholdColor) && robot.sensorColor2.getDistance(DistanceUnit.MM)<=ThresholdDistance)){
+            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_UP, IntakeSubsystem.RollerIntakeState.INTAKE_OFF));
+            schedule( new TransferSeq(intake, outtake, elevator));
+        }
+
+        if(gamepad1.start){
+            schedule(new IntakePosSeq(outtake, intake, elevator));
         }
 
         if(gamepad1.b)
@@ -152,6 +167,9 @@ public class Test extends CommandOpMode {
         Pose2d poseEstimate = drive.getPoseEstimate();
         telemetry.addData("x", poseEstimate.getX());
         telemetry.addData("y", poseEstimate.getY());
+        telemetry.addData("Left Motor POS", robot.leftElevator.getCurrentPosition());
+        telemetry.addData("right Motor POS", robot.rightElevator.getCurrentPosition());
+        telemetry.update();
 
     }
 

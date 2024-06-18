@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ArmComm
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ElevatorCommand;
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.FlapperCommand;
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.GripperCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.IntakeMotorCommand;
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.RotateCommand;
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ShoulderCommand;
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.SwitchPixelCommand;
@@ -18,17 +19,18 @@ public class DropSeq extends SequentialCommandGroup {
 
     public DropSeq(IntakeSubsystem intake, OutakeSubsystem outake) {
         super(
+                new IntakeMotorCommand(intake, IntakeSubsystem.RollerIntakeState.INTAKE_OFF),
                 new FlapperCommand(intake, IntakeSubsystem.FlappersState.FLAPPER_OPEN),
-                new WaitCommand(250),
+                new WaitCommand(100),
                 new ArmCommand(outake,OutakeSubsystem.ArmState.SAFEDROP),
                 new RotateCommand(outake, OutakeSubsystem.RotateState.PREDROP),
-                new WaitCommand(150),
+//                new WaitCommand(100),
                 new ArmCommand(outake,OutakeSubsystem.ArmState.PREDROP),
-                new WaitCommand(250),
-                new ShoulderCommand(outake, OutakeSubsystem.ShoulderState.DROP), // shoulderPick= 0.9877;
-                new WaitCommand(500),
-                new RotateCommand(outake,OutakeSubsystem.RotateState.PLACE),
-                new ArmCommand(outake, OutakeSubsystem.ArmState.DROP),
+//                new WaitCommand(150),
+                new ShoulderCommand(outake, OutakeSubsystem.ShoulderState.DROP),
+                new SwitchPixelCommand(outake, OutakeSubsystem.SwitchPixelState.SWITCH_DROP),
+                new RotateCommand(outake,OutakeSubsystem.RotateState.PLACE), // 0.5166
+                new ArmCommand(outake, OutakeSubsystem.ArmState.DROP), // 0.3905
                 new FlapperCommand(intake, IntakeSubsystem.FlappersState.FLAPPER_CLOSE)
 
 

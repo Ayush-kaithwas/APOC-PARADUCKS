@@ -21,6 +21,8 @@ public class GetValues extends CommandOpMode {
     public static double intakeServo=0.5;
     public double shoulderpos=0.5;
     public double switchPix=0.5;
+
+    public double rachetPos = 0.5;
     public double rotateP=0.5;
     public double leftGripPos=0.5;
     public double rightGripPos=0.5;
@@ -62,7 +64,7 @@ public class GetValues extends CommandOpMode {
         robot.rotate.setPosition(rotateP); // Rotate
         robot.droneLock.setPosition(dronePos); // Drone
         robot.Arm.setPosition(ArmPos);
-        robot.ratchet.setPosition(0.5);
+        robot.ratchet.setPosition(rachetPos);
 
 
     }
@@ -198,9 +200,15 @@ public class GetValues extends CommandOpMode {
         }
         else  if (gamepad2.left_bumper) {
             Extension(0, 1);
+
         }
-
-
+        else if (gamepad2.left_trigger>0) {
+            rachetPos+=1;
+            robot.ratchet.setPosition(rachetPos);
+        }else if (gamepad2.right_trigger>0) {
+            rachetPos-=1;
+            robot.ratchet.setPosition(rachetPos);
+        }
 
 
         telemetry.addData("Rotate", robot.rotate.getPosition());
@@ -299,7 +307,6 @@ public class GetValues extends CommandOpMode {
         robot.IntakeExtensionLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.IntakeExtensionLeft.setPower(pow);
     }
-
 
     //////////////// TODO PICKING POSITIONS
     /*

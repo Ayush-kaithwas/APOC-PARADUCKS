@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.hardware;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -45,6 +47,10 @@ public class RobotHardware {
     //Todo ========================================================= Color Sensor ===================================================================
     public RevColorSensorV3 sensorColor1;
     public RevColorSensorV3 sensorColor2;
+
+    //Todo ========================================================= Navx ===================================================================
+    NavxMicroNavigationSensor Navx;
+    IntegratingGyroscope gyro;
 
 
     //Todo ========================================================= Robot Setup ===================================================================

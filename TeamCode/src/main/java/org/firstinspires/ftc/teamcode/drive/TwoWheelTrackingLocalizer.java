@@ -36,22 +36,17 @@ import java.util.List;
  */
 @Config
 public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
-    public static double TICKS_PER_REV = 8192;
-    public static double WHEEL_RADIUS =1.14173228346; // in
+    public static double TICKS_PER_REV = 2000;
+    public static double WHEEL_RADIUS =0.9448818897637795; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double PARALLEL_X =  -1.53543; // X is the up and down direction
-    public static double PARALLEL_Y = 5.03937; // Y is the strafe direction
+    public static double PARALLEL_X =  2.299213; // X is the up and down direction
+    public static double PARALLEL_Y = 4.7440945; // Y is the strafe direction
 
-    public static double PERPENDICULAR_X =-6.49606 ;//1.3956693;
-    public static double PERPENDICULAR_Y =1.57480;
-
-
-
-
-    //  RR STEP 1 below 2
-    public static double X_MULITPLIER = 1.0040;
-    public static double Y_MULITPLIER = 1 ;
+    public static double PERPENDICULAR_X =1.7492126 ;//1.3956693;
+    public static double PERPENDICULAR_Y =1.2775591;//actual1.75196;//1.2775591;cad
+    public static double X_MULITPLIER = 0.99531; // 0.99541
+    public static double Y_MULITPLIER =  0.99531;
 
     // Parallel/Perpendicular to the forward axis
     // Parallel wheel is parallel to the forward axis
@@ -68,15 +63,14 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
         this.drive = drive;
         //STEP 2 CHANGE DEVICE NAME
-        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
-        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRear"));
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRear"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
-        perpendicularEncoder.setDirection(Encoder.Direction.REVERSE);
+        parallelEncoder.setDirection(Encoder.Direction.REVERSE);
 
 
     }
-
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }

@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.IntakeS
 public class IntakePixel extends SequentialCommandGroup {
     public IntakePixel(IntakeSubsystem Intake, IntakeSubsystem.IntakeServoState stackState , IntakeSubsystem.RollerIntakeState rollerState) {
         super(
-                new FlapperCommand(Intake, IntakeSubsystem.FlappersState.FLAPPER_CLOSE), // Flapper Close
                 new IntakeServoCommand(Intake,stackState), //  Intake Motor Start
                 new IntakeMotorCommand(Intake, rollerState) // Stack Servo down
         );

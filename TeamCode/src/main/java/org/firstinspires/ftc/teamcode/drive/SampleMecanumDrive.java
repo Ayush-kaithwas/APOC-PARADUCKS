@@ -1,3 +1,4 @@
+
 //TWO WHEEL
 package org.firstinspires.ftc.teamcode.drive;
 
@@ -64,24 +65,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
 
-    //Before maintainance @50
-//  public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(7.5, 0.002, 0.25);//kd 0.7 //old b
-//  public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.8, 0.09, 0.04);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.8,0.005, 0);//kd 0.7 //old b
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8.5, 0.005, 0.003);
 
-
-    //after maintainance @50 TODO Old
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(7.68,0.009, 0.12);//kd 0.7 //old b
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6.8, 0.02, 0.3);
-
-    // TODO NEW
-//    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0,0, 0);//kd 0.7 //old b
-//    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
-
-    //after maintainance @75
-//    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);//kd 0.7 //old b
-//    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8.2, 0.09, 0.02);
-
-    public static double LATERAL_MULTIPLIER =1.5;//1.51 after maintainaance @50
+    public static double LATERAL_MULTIPLIER =2.55;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -111,12 +98,15 @@ public class SampleMecanumDrive extends MecanumDrive {
     Orientation angle=null;
 
     public double robotHeading;
+    public double Heading;
+
+    public double headingOffset=0;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.2);
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.3);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -136,6 +126,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         //TODO:Hardwaremap Navx
         navxMicro = hardwareMap.get(NavxMicroNavigationSensor.class, "navx");
         gyro = (IntegratingGyroscope)navxMicro;
+        angle =gyro.getAngularOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES);
+        robotHeading=AngleUnit.DEGREES.normalize(angle.firstAngle-headingOffset);
+
+
+
         navxMicro.initialize();//Resetting Navx
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftRear");
@@ -340,9 +335,9 @@ public class SampleMecanumDrive extends MecanumDrive {
             robotHeading = Math.toRadians(angle.firstAngle);
         }
         else {
-            angle = gyro.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            robotHeading = Math.toRadians(angle.firstAngle);
-//            robotHeading=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+//            angle = gyro.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//            robotHeading = Math.toRadians(angle.firstAngle);
+            robotHeading=imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         }
         return robotHeading;
     }
@@ -404,13 +399,22 @@ public class SampleMecanumDrive extends MecanumDrive {
         imu.resetYaw();
     }
 
+    public void resetNavx(){
+        robotHeading=angle.firstAngle;
+    }
+    public double SevrvoMapping(double heading){
+        return (heading +180)/360.0;
+    }
 
-    String formatAngle(AngleUnit angleUnit, double angle) {
+    public  String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
 
-    String formatDegrees(double degrees){
+    public String formatDegrees(double degrees){
         return String.format("%.10f", AngleUnit.DEGREES.normalize(degrees));
     }
 
 }
+
+
+
