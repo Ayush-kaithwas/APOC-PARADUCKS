@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.hardware.Globals;
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Globals.IS_CUSTOMIMU=true;
+        Globals.IS_CUSTOMIMU=false;
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         waitForStart();

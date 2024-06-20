@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto.Blue;
 
+import static org.firstinspires.ftc.teamcode.opmode.ParasTeleop.ThresholdColor;
+
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -14,10 +16,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Subsystem.ElevatorSubsytem;
 import org.firstinspires.ftc.teamcode.Subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystem.OutakeSubsystem;
+import org.firstinspires.ftc.teamcode.commandBase.command.teleopcommand.sequentialcommands.TransferSeq;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.Globals;
@@ -45,6 +49,8 @@ public class BlueFar65 extends LinearOpMode {
     private PropPipeline propPipeline;
     private VisionPortal portal;
 
+    public static int ThresholdDistance=15;
+    public static int ThresholdColor=700;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -110,22 +116,228 @@ public class BlueFar65 extends LinearOpMode {
 
 
 
-        Pose2d startPose = new Pose2d(-38, 62, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(-38, 62, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
 
 //
 
         TrajectorySequence center = drive.trajectorySequenceBuilder(startPose)
-
+                .lineToLinearHeading(new Pose2d(-56, 30, 60))
                 .build();
 
 
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(startPose)
+
+                // todo Write a command to drop purple pixel and take intake
+                .addTemporalMarker(()-> Intake.rollOutside(0.7))
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackFive))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackFour))
+                .waitSeconds(0.5)
+
+                // todo going for purple pixel
+                .lineToConstantHeading(new Vector2d(-56, 30))
+
+
+                // todo write trajectories to the backdrop
+                .addTemporalMarker(()-> detect())
+                .lineToConstantHeading(new Vector2d(-38, 57))
+
+                .lineToConstantHeading(new Vector2d(24, 57))
+
+                // todo write command to drop yellow and white pixel
+                .addTemporalMarker(() -> robot.intakeMotor.setPower(0))
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackDown))
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderSafePick))
+                .waitSeconds(0.2)
+                .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelInit))
+                .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperOpen))
+                .waitSeconds(0.2)
+                .addTemporalMarker(()-> Outtake.gripSafeOpen())
+                .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
+                .addTemporalMarker(()-> Outtake.rotatePick())
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmSafePick))
+                .waitSeconds(0.25)
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()->Outtake.ArmServo(Globals.ArmPick))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderPick))
+                .waitSeconds(0.3)
+                .addTemporalMarker(()->Outtake.gripCloseBoth())
+                .waitSeconds(0.25)
+                .lineToConstantHeading(new Vector2d(50,29))   // TODO (AT BACKDROP)
+
+//                 TODO DROPPING THE YELLOW AND WHITE PIXEL
+
+
+                // DROPPING SEQUENCE
+
+                .addTemporalMarker(()-> Intake.intakeStop())
+//                .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperOpen))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmSafeDrop))
+                .addTemporalMarker(()-> Outtake.rotatePreDrop())
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderDrop))
+                .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelDrop))
+                .addTemporalMarker(()->Outtake.rotateDrop())
+                .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperClose))
+                .addTemporalMarker(()-> Outtake.gripOpenBoth())
+                .waitSeconds(0.1)
+
+
+                // COMING BACK TO NEUTRAL POS
+
+
+//                 ================================================================= TODO FIRST CYCLE START FOR WHITE PIXEL ========================================================
+                .lineToConstantHeading(new Vector2d(24, 55))
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackInit))
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmInit))
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackInit))
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmInit))
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .addTemporalMarker(()-> Outtake.rotateInit())
+                .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelInit))
+                .addTemporalMarker(()-> Outtake.gripSafeOpen())
+
+                .lineToConstantHeading(new Vector2d(-38, 55))
+
+                // TODO TAKING PIXELS FROM STACK
+                .addTemporalMarker(()-> Intake.rollOutside(0.7))
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackFour))
+                .waitSeconds(0.03)
+                .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackThree))
+                .waitSeconds(0.5)
+                .lineToLinearHeading(new Pose2d(-59, 40, Math.toRadians(60)))
+
+                .addTemporalMarker(()-> detect())
+                .lineToLinearHeading(new Pose2d(-38, 55, 0))
+
+                .lineToConstantHeading(new Vector2d(24, 55))
+
+                .addTemporalMarker(() -> robot.intakeMotor.setPower(0))
+                .lineToConstantHeading(new Vector2d(50,40))  // TODO (AT BACKDROP)
+
+                // TODO DROPPING THE WHITE PIXEL ON THE BACKDROP
+
+                // TRANSFER SEQUENCE
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackDown))
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderSafePick))
+                .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelInit))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperOpen))
+                .addTemporalMarker(()-> Outtake.gripSafeOpen())
+                .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
+                .addTemporalMarker(()-> Outtake.rotatePick())
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmSafePick))
+                .waitSeconds(0.25)
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()->Outtake.ArmServo(Globals.ArmPick))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderPick))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()->Outtake.gripCloseBoth())
+
+                // DROPPING SEQUENCE
+                .addTemporalMarker(()-> Intake.intakeStop())
+                .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperOpen))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmSafeDrop))
+                .addTemporalMarker(()-> Outtake.rotatePreDrop())
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderDrop))
+                .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelDrop))
+                .addTemporalMarker(()->Outtake.rotateDrop())
+                .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperClose))
+                .addTemporalMarker(()-> Outtake.gripOpenBoth())
+                .waitSeconds(0.1)
+
+
+                // COMING BACK TO NEUTRAL POS
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackInit))
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmInit))
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackInit))
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmInit))
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .addTemporalMarker(()-> Outtake.rotateInit())
+                .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelInit))
+                .addTemporalMarker(()-> Outtake.gripSafeOpen())
+                // ================================================================= TODO SECOND CYCLE START FOR WHITE PIXEL ========================================================
+                .lineToConstantHeading(new Vector2d(24, 54))
+
+                .lineToConstantHeading(new Vector2d(-38, 54))
+
+                // TODO TAKING PIXELS FROM STACK
+                .addTemporalMarker(()-> Intake.rollOutside(0.7))
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackThree))
+                .waitSeconds(0.03)
+                .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackDown))
+                .waitSeconds(0.5)
+                .lineToLinearHeading(new Pose2d(-59, 40, Math.toRadians(60)))
+
+                .addTemporalMarker(()-> detect())
+                .lineToLinearHeading(new Pose2d(-38, 54, 0))
+
+                .lineToConstantHeading(new Vector2d(24, 54))
+
+                .addTemporalMarker(() -> robot.intakeMotor.setPower(0))
+                .lineToConstantHeading(new Vector2d(50,40))  // TODO (AT BACKDROP)
+
+                // TODO DROPPING THE WHITE PIXEL ON THE BACKDROP
+
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackDown))
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderSafePick))
+                .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelInit))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperOpen))
+                .addTemporalMarker(()-> Outtake.gripSafeOpen())
+                .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
+                .addTemporalMarker(()-> Outtake.rotatePick())
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmSafePick))
+                .waitSeconds(0.25)
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()->Outtake.ArmServo(Globals.ArmPick))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderPick))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()->Outtake.gripCloseBoth())
+
+
+                // DROPPING SEQUENCE
+                .addTemporalMarker(()-> Intake.intakeStop())
+                .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperOpen))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmSafeDrop))
+                .addTemporalMarker(()-> Outtake.rotatePreDrop())
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderDrop))
+                .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelDrop))
+                .addTemporalMarker(()->Outtake.rotateDrop())
+                .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperClose))
+                .addTemporalMarker(()-> Outtake.gripOpenBoth())
+                .waitSeconds(0.1)
+
+                // COMING BACK TO NEUTRAL POS
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackInit))
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmInit))
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
+                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackInit))
+                .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmInit))
+                .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .addTemporalMarker(()-> Outtake.rotateInit())
+                .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelInit))
+                .addTemporalMarker(()-> Outtake.gripSafeOpen())
                 .build();
 
         TrajectorySequence left = drive.trajectorySequenceBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(-56, 30, -60))
                 .build();
 
 
@@ -147,6 +359,14 @@ public class BlueFar65 extends LinearOpMode {
 
 
     }
+
+
+    public void detect(){
+        if(((robot.sensorColor1.red()>=ThresholdColor || robot.sensorColor1.blue()>=ThresholdColor || robot.sensorColor1.green()>=ThresholdColor ) && robot.sensorColor1.getDistance(DistanceUnit.MM)<=ThresholdDistance)
+                && ((robot.sensorColor2.red()>=ThresholdColor || robot.sensorColor2.blue()>=ThresholdColor || robot.sensorColor2.green()>=ThresholdColor) && robot.sensorColor2.getDistance(DistanceUnit.MM)<=ThresholdDistance)){
+            Intake.intakeStart(0.8);
+            }
+        }
 
     //Setting up lifter
     public void setServoShoulder(double leftPos){    //Todo add servo offset if needed.

@@ -44,9 +44,9 @@ public class Globals {
     // TODO==========================================================  FLapper Servo Value ====================================================
 
     //Intake values
-    public static double flapperOpen=0.8;
+    public static double flapperOpen=0.88;
     public static double flapperMid=0.358;
-    public static double flapperClose=0;
+    public static double flapperClose=0.25;
 
 
     // TODO==========================================================  Shoulder Servo Value ====================================================

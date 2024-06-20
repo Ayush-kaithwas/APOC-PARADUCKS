@@ -89,9 +89,11 @@ public class BlueClose60 extends LinearOpMode {
             telemetry.addLine("ready");
             try{
                 marker = propPipeline.getLocation();    //Storing PropLocation  ,if error throw outside loop
-            }catch (Exception e){
+            }
+            catch (Exception e){
                 marker = Location.RIGHT;
             }
+
             // JOYSTICK //
             if(gamepad1.dpad_left){
                 marker = Location.LEFT;
@@ -117,7 +119,6 @@ public class BlueClose60 extends LinearOpMode {
 //
 
         TrajectorySequence center = drive.trajectorySequenceBuilder(startPose)
-
                 .build();
 
 
@@ -134,9 +135,13 @@ public class BlueClose60 extends LinearOpMode {
 
         if(marker==Location.LEFT){
             drive.followTrajectorySequence(left);
-        } else if (marker==Location.RIGHT) {
+        }
+        else if (marker==Location.RIGHT)
+        {
             drive.followTrajectorySequence(right);
-        }else {
+        }
+        else
+        {
             drive.followTrajectorySequence(center);
         }
 
