@@ -159,18 +159,25 @@ public class GetValues extends CommandOpMode {
 
 
         // TODO=====================================================Intake Motor =================================================================
-        else if (gamepad2.x)
-        {
-//            intakeMotorPos+=10;
-//            intakeMotorCounts(intakeMotorPos,1);
-            robot.intakeMotor.setPower(0.8);
-
-        }
-        else if (gamepad2.y)
-        {
-//            intakeMotorPos-=10;
-//            intakeMotorCounts(intakeMotorPos,1);
-            robot.intakeMotor.setPower(-0.8);
+//        else if (gamepad2.x)
+//        {
+////            intakeMotorPos+=10;
+////            intakeMotorCounts(intakeMotorPos,1);
+//            robot.intakeMotor.setPower(0.8);
+//
+//        }
+//        else if (gamepad2.y)
+//        {
+////            intakeMotorPos-=10;
+////            intakeMotorCounts(intakeMotorPos,1);
+//            robot.intakeMotor.setPower(-0.8);
+//        }
+        else if(gamepad2.x){
+            rachetPos +=0.001;
+            robot.ratchet.setPosition(rachetPos);
+        }else if(gamepad2.y){
+            rachetPos -=0.001;
+            robot.ratchet.setPosition(rachetPos);
         }
 
         // TODO===================================================== ARM Servo =================================================================
@@ -202,16 +209,20 @@ public class GetValues extends CommandOpMode {
             Extension(0, 1);
 
         }
+
+
+        // TODO ===================================================== Rachet Servo ======================================================================
         else if (gamepad2.left_trigger>0) {
-            rachetPos+=1;
+            rachetPos+=0.01;
             robot.ratchet.setPosition(rachetPos);
         }else if (gamepad2.right_trigger>0) {
-            rachetPos-=1;
+            rachetPos-=0.01;
             robot.ratchet.setPosition(rachetPos);
         }
 
 
         telemetry.addData("Rotate", robot.rotate.getPosition());
+        telemetry.addData("RAtCHET", robot.ratchet.getPosition());
         telemetry.addData("Flapper", robot.flappers.getPosition());
         telemetry.addData("Stack Servo", robot.stackServo.getPosition());
         telemetry.addData("Left Grip", robot.leftGrip.getPosition());

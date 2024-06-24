@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto.Blue;
+package org.firstinspires.ftc.teamcode.Auto.Red;
 
 import android.util.Size;
 
@@ -6,10 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -18,7 +15,6 @@ import org.firstinspires.ftc.teamcode.Subsystem.ElevatorSubsytem;
 import org.firstinspires.ftc.teamcode.Subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystem.OutakeSubsystem;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware.Globals;
 import org.firstinspires.ftc.teamcode.hardware.Location;
@@ -30,7 +26,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous
 @Config
-public class BlueClose60 extends LinearOpMode {
+public class RedClose60Unstable extends LinearOpMode {
 
     private RobotHardware robot=RobotHardware.getInstance();   //Robot instance
 
@@ -49,7 +45,7 @@ public class BlueClose60 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         drive=new SampleMecanumDrive(hardwareMap);
-        Globals.ALLIANCE = Location.BLUE;
+        Globals.ALLIANCE = Location.RED;
         Globals.SIDE = Location.CLOSE;
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -89,11 +85,9 @@ public class BlueClose60 extends LinearOpMode {
             telemetry.addLine("ready");
             try{
                 marker = propPipeline.getLocation();    //Storing PropLocation  ,if error throw outside loop
-            }
-            catch (Exception e){
+            }catch (Exception e){
                 marker = Location.RIGHT;
             }
-
             // JOYSTICK //
             if(gamepad1.dpad_left){
                 marker = Location.LEFT;
@@ -112,18 +106,11 @@ public class BlueClose60 extends LinearOpMode {
 
 
 
-        Pose2d startPose = new Pose2d(14, 62, Math.toRadians(180)); // original
+        Pose2d startPose = new Pose2d(14, -62, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
 
-
-//
-
         TrajectorySequence center = drive.trajectorySequenceBuilder(startPose)
-
-
                 .build();
-
-
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(startPose)
                 .build();
@@ -131,28 +118,19 @@ public class BlueClose60 extends LinearOpMode {
         TrajectorySequence left = drive.trajectorySequenceBuilder(startPose)
                 .build();
 
-
-
         waitForStart();
 
         if(marker==Location.LEFT){
             drive.followTrajectorySequence(left);
-        }
-        else if (marker==Location.RIGHT)
-        {
+        } else if (marker==Location.RIGHT) {
             drive.followTrajectorySequence(right);
-        }
-        else
-        {
+        }else {
             drive.followTrajectorySequence(center);
         }
 
         while (opModeIsActive()){
             telemetry.update();
         }
-
-
-
     }
 
     //Setting up lifter

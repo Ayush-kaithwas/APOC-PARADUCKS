@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.systemcheck;
+package org.firstinspires.ftc.teamcode.opmode;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Subsystem.ElevatorSubsytem;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ElevatorCommand;
+import org.firstinspires.ftc.teamcode.commandBase.command.teleopcommand.sequentialcommands.DropSeq;
 
 @Config
 @TeleOp
@@ -39,20 +42,7 @@ public class HangerCheck extends LinearOpMode {
                 executeHanger(-targetPos,1);
             }
 
-            /////////////////////////////////////
-            if(gamepad1.a){
-                hangerMotor1.setPower(powerON);
-                hangerMotor2.setPower(powerON);
 
-            } else if (gamepad1.b) {
-                hangerMotor1.setPower(0);
-                hangerMotor2.setPower(0);
-            }
-            //////////////////////////////////////
-            if(gamepad1.x){
-                hangerMotor1.setPower(-powerON);
-                hangerMotor2.setPower(-powerON);
-            }
             telemetry.addData("M1",hangerMotor1.getCurrentPosition());
             telemetry.addData("M1 Current",hangerMotor1.getCurrent(CurrentUnit.AMPS));
 

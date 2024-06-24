@@ -77,7 +77,7 @@ public class BlueFar65 extends LinearOpMode {
         setServoShoulder(Globals.shoulderInit);
         robot.rotate.setPosition(Globals.rotateInit);
         robot.switchPixel.setPosition(Globals.switchPixelInit);
-
+        Extension(0,1);
 
 
         PropPipeline propPipeline = new PropPipeline();
@@ -131,7 +131,7 @@ public class BlueFar65 extends LinearOpMode {
         TrajectorySequence right = drive.trajectorySequenceBuilder(startPose)
 
                 // todo Write a command to drop purple pixel and take intake
-                .addTemporalMarker(()-> Intake.rollOutside(0.7))
+                .addTemporalMarker(()-> Intake.rollOutside(0.75))
                 .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackFive))
                 .waitSeconds(0.1)
                 .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackFour))
@@ -148,6 +148,7 @@ public class BlueFar65 extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(24, 57))
 
                 // todo write command to drop yellow and white pixel
+                // TRANSFER SEQUENCE
                 .addTemporalMarker(() -> robot.intakeMotor.setPower(0))
                 .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackDown))
                 .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderSafePick))
@@ -172,15 +173,17 @@ public class BlueFar65 extends LinearOpMode {
 
 //                 TODO DROPPING THE YELLOW AND WHITE PIXEL
 
-
                 // DROPPING SEQUENCE
-
+                .waitSeconds(0.3)
                 .addTemporalMarker(()-> Intake.intakeStop())
 //                .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperOpen))
                 .waitSeconds(0.1)
                 .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmSafeDrop))
+                .waitSeconds(0.1)
                 .addTemporalMarker(()-> Outtake.rotatePreDrop())
+                .waitSeconds(0.1)
                 .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderDrop))
+                .waitSeconds(2)
                 .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelDrop))
                 .addTemporalMarker(()->Outtake.rotateDrop())
                 .addTemporalMarker(()-> robot.flappers.setPosition(Globals.flapperClose))
@@ -188,18 +191,22 @@ public class BlueFar65 extends LinearOpMode {
                 .waitSeconds(0.1)
 
 
-                // COMING BACK TO NEUTRAL POS
 
 
 //                 ================================================================= TODO FIRST CYCLE START FOR WHITE PIXEL ========================================================
                 .lineToConstantHeading(new Vector2d(24, 55))
+
+                // COMING BACK TO NEUTRAL POS
                 .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackInit))
                 .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmInit))
                 .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .waitSeconds(0.5)
                 .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
+                .waitSeconds(0.2)
                 .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackInit))
                 .addTemporalMarker(()-> Outtake.ArmServo(Globals.ArmInit))
                 .addTemporalMarker(()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .waitSeconds(0.1)
                 .addTemporalMarker(()-> Outtake.rotateInit())
                 .addTemporalMarker(()-> Outtake.setSwitchPixel(Globals.switchPixelInit))
                 .addTemporalMarker(()-> Outtake.gripSafeOpen())
@@ -207,12 +214,12 @@ public class BlueFar65 extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-38, 55))
 
                 // TODO TAKING PIXELS FROM STACK
-                .addTemporalMarker(()-> Intake.rollOutside(0.7))
+                .addTemporalMarker(()-> Intake.rollOutside(0.75))
                 .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackFour))
                 .waitSeconds(0.03)
                 .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackThree))
                 .waitSeconds(0.5)
-                .lineToLinearHeading(new Pose2d(-59, 40, Math.toRadians(60)))
+                .lineToLinearHeading(new Pose2d(-57.5, 40, Math.toRadians(60)))
 
                 .addTemporalMarker(()-> detect())
                 .lineToLinearHeading(new Pose2d(-38, 55, 0))

@@ -7,6 +7,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.hardware.Globals;
 import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
 
+import java.security.cert.Extension;
+
 public class ExtensionSubsystem extends SubsystemBase {
     private RobotHardware robot;
     public static double current;
@@ -16,6 +18,7 @@ public class ExtensionSubsystem extends SubsystemBase {
     public enum IntakeExtensionState{  //Extension Intake
         INIT,
         Extend,
+        PULL_IN
     }
 
 
@@ -33,6 +36,9 @@ public class ExtensionSubsystem extends SubsystemBase {
                 break;
             case Extend:
                 Extension(Globals.Extend, 1);
+                break;
+            case PULL_IN:
+                Extension(Globals.Pull_In, 1);
 
         }
     }
@@ -42,6 +48,9 @@ public class ExtensionSubsystem extends SubsystemBase {
         robot.IntakeExtensionLeft.setTargetPosition(ExtendVal);
         robot.IntakeExtensionLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.IntakeExtensionLeft.setPower(pow);
+    }
+    public void reset(){
+        robot.IntakeExtensionLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
 }

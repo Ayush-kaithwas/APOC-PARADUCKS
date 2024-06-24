@@ -69,14 +69,15 @@ public class Test extends CommandOpMode {
         elevator = new ElevatorSubsytem(robot);
         extension = new ExtensionSubsystem(robot);
 
-        robot.flappers.setPosition(Globals.flapperClose);
-        sleep(200);
-        robot.stackServo.setPosition(Globals.stackInit);
-        sleep(150);
-        robot.Arm.setPosition(Globals.ArmInit);
-        setServoShoulder(Globals.shoulderInit);
-        robot.rotate.setPosition(Globals.rotateInit);
-        robot.switchPixel.setPosition(Globals.switchPixelInit);
+//        robot.flappers.setPosition(Globals.flapperClose);
+//        sleep(200);
+//        robot.stackServo.setPosition(Globals.stackInit);
+//        sleep(150);
+//        robot.Arm.setPosition(Globals.ArmInit);
+//        setServoShoulder(Globals.shoulderInit);
+//        robot.rotate.setPosition(Globals.rotateInit);
+//        robot.switchPixel.setPosition(Globals.switchPixelInit);
+        robot.droneLock.setPosition(Globals.DroneLock);
     }
 
     @Override
@@ -95,50 +96,50 @@ public class Test extends CommandOpMode {
         telemetry.addData("distance1-",robot.sensorColor1.getDistance(DistanceUnit.MM));
         telemetry.addData("distance2-",robot.sensorColor2.getDistance(DistanceUnit.MM));
 
-        if(((robot.sensorColor1.red()>=ThresholdColor || robot.sensorColor1.blue()>=ThresholdColor || robot.sensorColor1.green()>=ThresholdColor ) && robot.sensorColor1.getDistance(DistanceUnit.MM)<=ThresholdDistance)
-                && ((robot.sensorColor2.red()>=ThresholdColor || robot.sensorColor2.blue()>=ThresholdColor || robot.sensorColor2.green()>=ThresholdColor) && robot.sensorColor2.getDistance(DistanceUnit.MM)<=ThresholdDistance)){
-            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_UP, IntakeSubsystem.RollerIntakeState.INTAKE_OFF));
-            schedule( new TransferSeq(intake, outtake, elevator));
-        }
+//        if(((robot.sensorColor1.red()>=ThresholdColor || robot.sensorColor1.blue()>=ThresholdColor || robot.sensorColor1.green()>=ThresholdColor ) && robot.sensorColor1.getDistance(DistanceUnit.MM)<=ThresholdDistance)
+//                && ((robot.sensorColor2.red()>=ThresholdColor || robot.sensorColor2.blue()>=ThresholdColor || robot.sensorColor2.green()>=ThresholdColor) && robot.sensorColor2.getDistance(DistanceUnit.MM)<=ThresholdDistance)){
+//            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_UP, IntakeSubsystem.RollerIntakeState.INTAKE_OFF));
+//            schedule( new TransferSeq(intake, outtake, elevator));
+//        }
 
         if(gamepad1.start){
             schedule(new IntakePosSeq(outtake, intake, elevator));
         }
 
-        if(gamepad1.b)
-        {
-            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON)); // Intaking the Pixel From ground
-        }
-        else if (gamepad1.a)
-        {
-            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_OFF));
-        }
-        else if (gamepad1.right_trigger>0) {
-            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.PIXEL_OUT)); // Intaking the Pixel From ground
-
-        } else if(gamepad1.left_bumper){
-            schedule(new DropSeq(intake,outtake));
-        }
-        else if(gamepad1.x){
-            robot.flappers.setPosition(Globals.flapperClose);
-        }
-        else if(gamepad1.y){
-            schedule(new GripperCommand(outtake, OutakeSubsystem.GripperState.GRIP_OPEN));
-        }
-        else if(gamepad1.right_bumper)
-        {
-            robot.stackServo.setPosition(Globals.stackFive);
-        }
-        else if(gamepad1.left_trigger>0){
-            robot.stackServo.setPosition(Globals.stackFour);
-        }
-        else if(gamepad1.start){
-            robot.stackServo.setPosition(Globals.stackThree);
-        }
-        else if(gamepad1.back){
-            robot.stackServo.setPosition(Globals.stackDown);
-        }
-
+//        if(gamepad1.b)
+//        {
+//            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON)); // Intaking the Pixel From ground
+//        }
+//        else if (gamepad1.a)
+//        {
+//            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_OFF));
+//        }
+//        else if (gamepad1.right_trigger>0) {
+//            schedule(  new IntakePixel(intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.PIXEL_OUT)); // Intaking the Pixel From ground
+//
+//        } else if(gamepad1.left_bumper){
+//            schedule(new DropSeq(intake,outtake));
+//        }
+//        else if(gamepad1.x){
+//            robot.flappers.setPosition(Globals.flapperClose);
+//        }
+//        else if(gamepad1.y){
+//            schedule(new GripperCommand(outtake, OutakeSubsystem.GripperState.GRIP_OPEN));
+//        }
+//        else if(gamepad1.right_bumper)
+//        {
+//            robot.stackServo.setPosition(Globals.stackFive);
+//        }
+//        else if(gamepad1.left_trigger>0){
+//            robot.stackServo.setPosition(Globals.stackFour);
+//        }
+//        else if(gamepad1.start){
+//            robot.stackServo.setPosition(Globals.stackThree);
+//        }
+//        else if(gamepad1.back){
+//            robot.stackServo.setPosition(Globals.stackDown);
+//        }
+//
         else if(gamepad1.dpad_up)
         {
             inc(0.7);
@@ -146,13 +147,43 @@ public class Test extends CommandOpMode {
         else if(gamepad1.dpad_down){
             dec(0.7);
         }
+//
+//        else if(gamepad2.left_bumper){
+//            schedule( new ExtensionCommand(extension, ExtensionSubsystem.IntakeExtensionState.INIT));
+//        }
+//        else if(gamepad2.right_bumper){
+//            schedule( new ExtensionCommand(extension, ExtensionSubsystem.IntakeExtensionState.Extend));
+//        }
+        if(gamepad2.x)
+        {
+            // Hang position
+            schedule(new DropSeq(intake,outtake));
+            sleep(500);
+            schedule(new ElevatorCommand(elevator, ElevatorSubsytem.ElevateState.HANGERPOS,dropHeightOne));
+        }
+        if(gamepad2.a)
+        {
+            // Hang
+            schedule( new ElevatorCommand(elevator, ElevatorSubsytem.ElevateState.HANG, dropHeightOne));
+        }
 
+        if(gamepad2.right_bumper){
+            robot.ratchet.setPosition(Globals.RachetClose);
+        }
         else if(gamepad2.left_bumper){
-            schedule( new ExtensionCommand(extension, ExtensionSubsystem.IntakeExtensionState.INIT));
+            robot.ratchet.setPosition(Globals.RachetOpen);
+    }
+
+        else if(gamepad2.y){
+            robot.droneLock.setPosition(Globals.DroneOPen);
         }
-        else if(gamepad2.right_bumper){
-            schedule( new ExtensionCommand(extension, ExtensionSubsystem.IntakeExtensionState.Extend));
-        }
+
+
+
+
+
+
+
         // TODO ============================================ Drive ===========================================================
         drive.setWeightedDrivePower(
                 new Pose2d(

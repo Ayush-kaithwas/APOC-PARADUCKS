@@ -174,5 +174,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public void intakeServoDown(){
         robot.stackServo.setPosition(0);
     }
+    public void stackInit(){
+        robot.stackServo.setPosition(Globals.stackInit);
+    }
 
 }

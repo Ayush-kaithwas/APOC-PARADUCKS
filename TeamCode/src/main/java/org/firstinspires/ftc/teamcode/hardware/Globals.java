@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class Globals {
 
+    // Drone on 0.65
     public static boolean IS_AUTO=false;
     public static boolean IS_IMU=false;
 
@@ -28,14 +29,14 @@ public class Globals {
     // TODO==========================================================  Hanging Value ====================================================
 
 
-    public static  int hangpos = -1200;
+    public static  int hangpos = -2400;
 
-    public static int hang = 0;
+    public static int hang = -300;
 
 
     // TODO==========================================================  Intake Servo Value ====================================================
     public static double stackInit=0.8466;//0.8405;
-    public static double stackDown=0.444;
+    public static double stackDown=0.56;//0.444;
     public static double stackThree=0.5616;
     public static double stackFour=0.608;
     public static double stackFive=0.6338;
@@ -63,14 +64,14 @@ public class Globals {
     // TODO==========================================================  Switch Pixel Servo Value ====================================================
     public static double switchPixelInit=0.5105;//0.505;//0.520;  //Safe   0.49
     public static double switchPixelDrop= 0.5255; //0.49;//0.520;  //Safe   0.49
-    public static double switchPixelLeft=0.588;
-    public static double switchPixelLeftInverse=0.0489;
-    public static double switchPixelRight=0.437;  //USE EQN 1- PEXEL LEFT
-    public static double switchPixelRightInverse= 0.951;
-    public static double switchPixelHorizontal=0.7866;
-    public static double switchPixelHorizontalInverse=0.22666;
-    public static double switchPixelVertical=0.520;
-    public static double switchPixelVerticalInverse=0.102;
+    public static double switchPixelLeft=0.3655;
+    public static double switchPixelLeftInverse=0.9288;
+    public static double switchPixelRight=1-switchPixelLeft;  //USE EQN 1- PEXEL LEFT
+    public static double switchPixelRightInverse= 1-switchPixelLeftInverse;
+    public static double switchPixelHorizontal=0.51;
+    public static double switchPixelHorizontalInverse=0;
+    public static double switchPixelVertical=0.7977;
+    public static double switchPixelVerticalInverse=1-switchPixelVertical;
     public static double switchPixelIntake=0.4738;
 
 
@@ -78,13 +79,13 @@ public class Globals {
     // TODO==========================================================  Left / Right Gripper Servo Value ====================================================
 
     //Gripper
-    public static double leftGripOpen=0.76;
-    public static double leftGripSafe=0.5; // Has To Change
-    public static double leftGripClose=0.201;
+    public static double leftGripOpen=0.2227;
+    public static double leftGripSafe=0.5205; // Has To Change
+    public static double leftGripClose=0.815;
 
-    public static double rightGripOpen=0.182;
-    public static double rightGripSafe=0.5; // Has To Change
-    public static double rightGripClose=0.707;
+    public static double rightGripOpen=0.8716;
+    public static double rightGripSafe=0.5401; // Has To Change
+    public static double rightGripClose=0.2038;
 
 
     // TODO==========================================================  Rotate Servo Value ====================================================
@@ -98,6 +99,9 @@ public class Globals {
     // TODO=============================================================== x Extension Value ===================================================
     public static int Extend = -1600;
     public static int ExtendInit = 0;
+    public static int Pull_In = 50;
+
+
 
     // TODO =================================================================  ARM Value  ====================================================
 
@@ -114,6 +118,27 @@ public class Globals {
     public static Location SIDE = Location.CLOSE;
     public static Location ALLIANCE = Location.BLUE;
 
+    // TODO ================================================================ RACHET VALUES ================================================================
+
+    public  static double RachetOpen = 0.78;
+    public  static double RachetClose = 0.22;
+
+    public  static double DroneLock = 0.65;
+    public  static double DroneOPen = 0.14;
+
+
+    // TODO =========================================================== AUTO POS ===========================================================================
+
+
+    public static double shoulderYellowSafe= 0.45;
+    public static double autoSwitchInit=0.8;
+    //Auto Grip
+    public static double autoleftGripInit=0.88;
+    public static double autorightGripInit=0.22;
+    //Auto Arm
+    public static double autoArmInit=0.251;
+    public static double autoArmYellow=0.4188;
+    public static double autostackInit=0.6999;
 }
 
 

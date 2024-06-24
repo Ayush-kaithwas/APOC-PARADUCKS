@@ -70,8 +70,10 @@ public class ElevatorSubsytem extends SubsystemBase {
                 break;
             case HANGERPOS:
                 extendTo(Globals.hangpos, 1);
+                break;
             case HANG:
                 extendTo(Globals.hang, 1);
+                break;
         }
 }
 

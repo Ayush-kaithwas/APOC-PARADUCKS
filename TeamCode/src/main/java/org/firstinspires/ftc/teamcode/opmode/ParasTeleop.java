@@ -8,18 +8,21 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Subsystem.ElevatorSubsytem;
 import org.firstinspires.ftc.teamcode.Subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystem.OutakeSubsystem;
+import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ArmCommand;
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ElevatorCommand;
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.ExtensionCommand;
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.FlapperCommand;
@@ -38,6 +41,8 @@ import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
 
 import java.security.cert.Extension;
 
+import dalvik.system.DelegateLastClassLoader;
+
 @TeleOp
 @Config
 
@@ -52,8 +57,8 @@ public class ParasTeleop extends CommandOpMode {
 
     public static int ElevatorPOs;
     public int counter =0;
-    public int[] LifterStates={1,2,3,4,5,6,7,8,9};  //Use this for counter
-    public int lifterCounter=0;
+    public int[] ElevatorStates={1,2,3,4,5,6,7,8,9};  //Use this for counter
+    public int ElevatorCounter=0;
     public static int  droneShoot;
     public static  int droneCnt=0;
     public static boolean pixelDrop = false;
@@ -64,7 +69,7 @@ public class ParasTeleop extends CommandOpMode {
     public static int dropHeightOne = 0;
     public static int ThresholdDistance=15;
     public static int ThresholdColor=700;
-    public static boolean extensionFlag = false;
+    public static boolean extensionFlag = true;
     public GamepadEx gamepadEx;
     public GamepadEx gamepadEx2;
     public boolean extendit = false;
@@ -72,9 +77,22 @@ public class ParasTeleop extends CommandOpMode {
     public boolean isDrop = false;
 
 
-    public static double head = 0.8;
+    public static double head = 0.5;
     public static double straight = 0.8;
-    public static double strafe = 0.8;
+    public static double strafe = 0.3;
+    public static int ElevatorPos;
+    public static int sliderPos;
+
+    public static boolean isElevate= false;
+    public static boolean shiftPixel= false;
+
+
+    public OutakeSubsystem.SwitchPixelState storeState= OutakeSubsystem.SwitchPixelState.SWITCH_HORIZONTAL;
+
+
+
+ public ElapsedTime timer = new ElapsedTime();
+    private boolean inversePixelFlag = false;
 
     @Override
     public void initialize() {
@@ -103,11 +121,37 @@ public class ParasTeleop extends CommandOpMode {
         setServoShoulder(Globals.shoulderInit);
         robot.rotate.setPosition(Globals.rotateInit);
         robot.switchPixel.setPosition(Globals.switchPixelInit);
+        robot.droneLock.setPosition(Globals.DroneLock);
+        robot.ratchet.setPosition(Globals.RachetOpen);
 
         while(opModeInInit())
         {
             Extension(0,1);
+            gamepad1.rumble(1, 1, 400);
+
+
+            if(gamepad1.dpad_up){
+                ElevatorPos += 1;
+            } else if (gamepad1.dpad_down) {
+                ElevatorPos -=1;
+            } else if (gamepad1.start) {
+                ElevatorPos=0;
+            }
+//            Todo Elevator adjustment in init.
+            if(gamepad1.dpad_left){
+                sliderPos += 1;
+            } else if (gamepad1.dpad_right) {
+                sliderPos -=1;
+            } else if (gamepad1.start) {
+                sliderPos=0;
+            }
+            Elevator.extendTo(ElevatorPos,0.9);
+            Elevator.extendTo(sliderPos,1);
+
         }
+
+        Elevator.reset();
+        Extension.reset();
 
         // TODO ============================================ Single Pixel Drop ===========================================================
 
@@ -117,11 +161,10 @@ public class ParasTeleop extends CommandOpMode {
         );
 
         // TODO ============================================= PIXEL OUT AND OFF TOGGLE =====================================================
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.B).toggleWhenPressed(
-                new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_UP, IntakeSubsystem.RollerIntakeState.INTAKE_OFF),
-                new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_UP, IntakeSubsystem.RollerIntakeState.PIXEL_OUT)
+        gamepadEx.getGamepadButton(GamepadKeys.Button.B).toggleWhenPressed(
+                new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON),
+                new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_OFF)
         );
-
 
 
     }
@@ -131,25 +174,130 @@ public class ParasTeleop extends CommandOpMode {
     {
         super.run();
 
+
+        // TODO ============================================ Elevator Height  ===========================================================
+        if(gamepad2.dpad_up && timer.seconds() > 0.2){
+            if(ElevatorCounter<9)
+            {
+                ElevatorCounter++;
+                timer.reset();
+            }
+
+        }
+        if(gamepad2.dpad_down && timer.seconds() > 0.2){
+            timer.reset();
+            if(ElevatorCounter>=1)
+            {
+                ElevatorCounter--;
+            }
+        }
+        // TODO =============================================  CHANGE ELEVATOR POS LOGIC ===============================================
+        if(gamepad2.dpad_up && isElevate){
+            if(ElevatorCounter<9) {
+                if(ElevatorCounter == 0){
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HOME, 0));
+                }
+                if (ElevatorStates[ElevatorCounter - 1] == 1) {
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.ONE, 0));
+                } else if (ElevatorStates[ElevatorCounter - 1] == 2) {
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.TWO, 0));
+                } else if (ElevatorStates[ElevatorCounter - 1] == 3) {
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.THREE, 0));
+                } else if (ElevatorStates[ElevatorCounter - 1] == 4) {
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.FOUR, 0));
+                } else if (ElevatorStates[ElevatorCounter - 1] == 5) {
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.FIVE, 0));
+                } else if (ElevatorStates[ElevatorCounter - 1] == 6) {
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.SIX, 0));
+                } else if (ElevatorStates[ElevatorCounter - 1] == 7) {
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.SEVEN, 0));
+                } else if (ElevatorStates[ElevatorCounter - 1] == 8) {
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.EIGHT, 0));
+                } else if (ElevatorStates[ElevatorCounter - 1] == 9) {
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.NINE, 0));
+                } else {
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HOME, 0));
+                }
+            }
+            else {
+                schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.HOME, 0));
+            }
+
+        }
+        if(gamepad2.dpad_down && isElevate)
+        {
+            if(ElevatorCounter>=1){
+                if(ElevatorCounter == 0){
+                    schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HOME, 0));
+                }
+                else if (ElevatorStates[ElevatorCounter - 1] == 1)
+                {
+                    schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.ONE, 0));
+                }
+                else if (ElevatorStates[ElevatorCounter - 1] == 2)
+                {
+                    schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.TWO, 0));
+                }
+                else if (ElevatorStates[ElevatorCounter - 1] == 3)
+                {
+                    schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.THREE, 0));
+                }
+                else if (ElevatorStates[ElevatorCounter - 1] == 4)
+                {
+                    schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.FOUR, 0));
+                }
+                else if (ElevatorStates[ElevatorCounter - 1] == 5)
+                {
+                    schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.FIVE, 0));
+                }
+                else if (ElevatorStates[ElevatorCounter - 1] == 6)
+                {
+                    schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.SIX, 0));
+                }
+                else if (ElevatorStates[ElevatorCounter - 1] == 7)
+                {
+                    schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.SEVEN, 0));
+                }
+                else if (ElevatorStates[ElevatorCounter - 1] == 8)
+                {
+                    schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.EIGHT, 0));
+                }
+                else if (ElevatorStates[ElevatorCounter - 1] == 9)
+                {
+                    schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.NINE, 0));
+                }
+                else
+                {
+                    schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.HOME, 0));
+                }
+            }
+            else {
+                schedule(new ElevatorCommand(Elevator,ElevatorSubsytem.ElevateState.HOME, 0));
+            }
+        }
+
         // TODO ============================================ Intake Position ===========================================================
         if(gamepad1.right_bumper && !isDrop){
-            head = 0.8;
-            strafe = 0.8;
+            head = 0.5;
+            strafe = 0.3;
             straight = 0.8;
             schedule( new GripperCommand(Outtake, OutakeSubsystem.GripperState.GRIP_OPEN));
-            sleep(200);
+            sleep(100);
             schedule( new IntakePosSeq(Outtake, Intake,Elevator));
             extendit = FALSE;
             isIntake = FALSE;
-            isDrop = true;
+            isElevate = false;
+            shiftPixel = false;
         }
 
 
         // TODO ============================================ Ground Level Intake ===========================================================
+        if(gamepad2.b){
+            schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.PIXEL_OUT)); // Intaking the Pixel From ground
+        }
         if(gamepad1.b){
-            schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON)); // Intaking the Pixel From ground
             head = 0.5;
-            strafe = 0.5;
+            strafe = 0.3;
             straight = 0.5;
         }
 
@@ -157,36 +305,113 @@ public class ParasTeleop extends CommandOpMode {
       // Transferring the pixel when colour sensor gets active
         if(((robot.sensorColor1.red()>=ThresholdColor || robot.sensorColor1.blue()>=ThresholdColor || robot.sensorColor1.green()>=ThresholdColor ) && robot.sensorColor1.getDistance(DistanceUnit.MM)<=ThresholdDistance)
                 && ((robot.sensorColor2.red()>=ThresholdColor || robot.sensorColor2.blue()>=ThresholdColor || robot.sensorColor2.green()>=ThresholdColor) && robot.sensorColor2.getDistance(DistanceUnit.MM)<=ThresholdDistance)){
-            if(extensionFlag || robot.IntakeExtensionLeft.getCurrentPosition()<5){
-                schedule( new TransferSeq(Intake, Outtake, Elevator));
+
+            if(extensionFlag && robot.IntakeExtensionLeft.getCurrentPosition()<10)
+            {
+                schedule( new TransferSeq(Intake, Outtake, Elevator, Extension),
+                        new WaitCommand(100),
+                        new InstantCommand(()->gamepad1.rumble(1, 1, 400)
+));
             }
-            head = 0.8;
-            strafe = 0.8;
+            head = 0.5;
+            strafe = 0.3;
             straight = 0.8;
             isDrop = true;
         }
 
         //////// Transferring logic ends
-        if(gamepad2.start) // Forcefully Executing the Transfer Sequence
+        if(gamepad2.y) // Forcefully Executing the Transfer Sequence
         {
-            schedule(new TransferSeq(Intake, Outtake, Elevator));
-            head = 0.8;
-            strafe = 0.8;
-            straight = 0.8;
-            isDrop = true;
+            if(robot.IntakeExtensionLeft.getCurrentPosition()<10){
+                schedule( new TransferSeq(Intake, Outtake, Elevator, Extension),
+                        new WaitCommand(100),
+                        new InstantCommand(()->{
+                            gamepad1.rumble(1, 1, 400);
+                        }
+                        ));
+                head = 0.5;
+                strafe = 0.3;
+                straight = 0.8;
+                isDrop = true;
+                extensionFlag = false;
+            }
         }
 
+        if(gamepad1.back){
+            extendit = false;
+            isIntake = false;
+            isDrop = true;
+            extensionFlag = false;
+        }
         if(gamepad1.left_bumper && isDrop)
         {
             head = 0.5;
-            strafe = 0.5;
+            strafe = 0.3;
             straight = 0.5;
 
-            schedule(new DropSeq(Intake,Outtake));
-            extendit = TRUE;
-            isIntake = TRUE;
-            isDrop = FALSE;
+            // DROPPING SEQ
 
+            if(ElevatorCounter==0){
+                schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.HOME, storeState));
+            }
+
+            else if(ElevatorCounter>=1){
+               if (ElevatorStates[ElevatorCounter - 1] == 1)
+               {
+                   schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.ONE, storeState));
+               }
+               else if (ElevatorStates[ElevatorCounter - 1] == 2)
+               {
+                   schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.TWO , storeState));
+               }
+               else if (ElevatorStates[ElevatorCounter - 1] == 3)
+               {
+                   schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.THREE , storeState));
+               }
+               else if (ElevatorStates[ElevatorCounter - 1] == 4)
+               {
+                   schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.FOUR , storeState));
+               }
+               else if (ElevatorStates[ElevatorCounter - 1] == 5)
+               {
+                   schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.FIVE , storeState));
+               }
+               else if (ElevatorStates[ElevatorCounter - 1] == 6)
+               {
+                   schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.SIX , storeState));
+               }
+               else if (ElevatorStates[ElevatorCounter - 1] == 7)
+               {
+                   schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.SEVEN , storeState));
+               }
+               else if (ElevatorStates[ElevatorCounter - 1] == 8)
+               {
+                   schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.EIGHT , storeState));
+               }
+               else if (ElevatorStates[ElevatorCounter - 1] == 9)
+               {
+                   schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.NINE , storeState));
+               }
+           }
+            else {
+                schedule(new DropSeq(Intake,Outtake, Elevator, ElevatorSubsytem.ElevateState.HOME, storeState));
+            }
+
+            // DROPPING SEQ END
+
+            extendit = true;
+            isIntake = true;
+            isDrop = false;
+            extensionFlag = false;
+            isElevate = true;
+            shiftPixel = true;
+        }
+
+        if(gamepad1.dpad_up){
+            inc(1);
+        }
+        if(gamepad1.dpad_down){
+            dec(1);
         }
 
 
@@ -199,104 +424,144 @@ public class ParasTeleop extends CommandOpMode {
         // TODO ============================================ Reverse Intake ===========================================================
         if(gamepad1.left_trigger>0)
         {
-            Intake.rollOutside(0.8);
+
         }
 
 //        // TODO ============================================ Drone Shoot ===========================================================
-//        if(gamepad1.back)
-//        {
-//            // Press back double time
-//            if(droneCnt>1)
-//            {
-//                robot.droneLock.setPosition(droneShoot);
-//            }
-//            else {
-//                droneCnt++;
-//            }
-//        }
-//
+        if(gamepad2.right_stick_button)
+        {
+            robot.droneLock.setPosition(Globals.DroneOPen);
+        }
 
         // TODO ================================================= STACK PIXEL ========================================================
         if(gamepad2.a){
             schedule( new IntakeServoCommand(Intake, IntakeSubsystem.IntakeServoState.FIVE_PIXEL));
-            schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON));
+            schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.FIVE_PIXEL, IntakeSubsystem.RollerIntakeState.INTAKE_ON));
 
         }
 
-//
+
 //        // TODO ============================================ Hanging ===========================================================
-        if(gamepad1.x)
+        if(gamepad2.x)
         {
             // Hang position
-            schedule( new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HANGERPOS, dropHeightOne));
+            schedule(new GripperCommand(Outtake,OutakeSubsystem.GripperState.GRIP_OPEN),
+                    new DropSeq(Intake,Outtake));
+            schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HANGERPOS,dropHeightOne));
+
         }
-        if(gamepad1.a)
+        if(gamepad2.right_trigger>0)
         {
             // Hang
-            schedule( new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HANG, dropHeightOne));
+            robot.ratchet.setPosition(Globals.RachetClose);
+            schedule( new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HANG, dropHeightOne),
+                    new InstantCommand(()-> Intake.setIntakeServo(Globals.stackInit))
+            );
+
+            Extension.Extension(50, 0.4);
         }
+
+        if(gamepad2.back){
+            robot.ratchet.setPosition(Globals.RachetOpen);
+        }
+
+
 
         // TODO ============================================ X Extension  ===========================================================
         if(gamepad1.x)
         {
             // Hang position
             schedule( new ExtensionCommand(Extension, ExtensionSubsystem.IntakeExtensionState.INIT));
-            sleep(2000);
-            extensionFlag = TRUE;
+            extensionFlag = true;
         }
-        if(gamepad1.a)
+        if(gamepad1.a && extensionFlag)
         {
             // Hang
             schedule( new ExtensionCommand(Extension, ExtensionSubsystem.IntakeExtensionState.Extend));
-            extensionFlag = FALSE;
+            extensionFlag = false;
         }
-        //
-//        // TODO ============================================ Elevator Height  ===========================================================
-        if(gamepad2.dpad_up){
-            if(lifterCounter<9)
-            {
-                lifterCounter++;
-            }
+
+
+        // TODO ========================================== SWITCH PIXEL =======================================================
+
+        if(gamepad2.left_trigger>0.8){
+            inversePixelFlag=true;
         }
-        if(gamepad2.dpad_down){
-            if(lifterCounter>1)
-            {
-                lifterCounter--;
+        else if (gamepad2.left_trigger<0.3)
+        {
+            inversePixelFlag=false;
+        }
+
+        if (gamepad2.right_bumper)
+        {
+            if (inversePixelFlag) {
+                storeState= OutakeSubsystem.SwitchPixelState.SWITCH_VERTICAL_INVERSE;
+                if(Elevator.elevateState.toString()!="HOME") {
+                    schedule(new SwitchPixelCommand(Outtake, OutakeSubsystem.SwitchPixelState.SWITCH_VERTICAL_INVERSE));
+                }
+            } else if(!inversePixelFlag) {
+                storeState=OutakeSubsystem.SwitchPixelState.SWITCH_VERTICAL;
+                if(Elevator.elevateState.toString()!="HOME") {
+                    schedule(new SwitchPixelCommand(Outtake, OutakeSubsystem.SwitchPixelState.SWITCH_VERTICAL));
+                }
             }
         }
 
-        if(gamepad1.dpad_up && extendit == TRUE)
-        {
-           if(lifterCounter>=1){
-               if (LifterStates[lifterCounter - 1] == 1) {
-                   schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.ONE,dropHeightOne));
-               }
-               else if (LifterStates[lifterCounter - 1] == 2) {
-                   schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.TWO,dropHeightOne));
-               }
-               else if (LifterStates[lifterCounter - 1] == 3) {
-                   schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.THREE,dropHeightOne));
-               }
-               else if (LifterStates[lifterCounter - 1] == 4) {
-                   schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.FOUR,dropHeightOne));
-               }
-               else if (LifterStates[lifterCounter - 1] == 5) {
-                   schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.FIVE,dropHeightOne));
-               }
-               else if (LifterStates[lifterCounter - 1] == 6) {
-                   schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.SIX,dropHeightOne));
-               }
-               else if (LifterStates[lifterCounter - 1] == 7) {
-                   schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.SEVEN,dropHeightOne));
-               }
-               else if (LifterStates[lifterCounter - 1] == 8) {
-                   schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.EIGHT,dropHeightOne));
-               }
-               else if (LifterStates[lifterCounter - 1] == 9) {
-                   schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.NINE,dropHeightOne));
-               }
-           }
+        if (gamepad2.left_bumper) {
+            if (inversePixelFlag) {
+                storeState=OutakeSubsystem.SwitchPixelState.SWITCH_HORIZONTAL_INVERSE;
+                if(!Elevator.elevateState.toString().equals("HOME")) {
+                    schedule(new SwitchPixelCommand(Outtake, OutakeSubsystem.SwitchPixelState.SWITCH_HORIZONTAL_INVERSE));
+                }
+
+            } else if(!inversePixelFlag) {
+                storeState=OutakeSubsystem.SwitchPixelState.SWITCH_HORIZONTAL;
+                if(!Elevator.elevateState.toString().equals("HOME")) {
+                    schedule(new SwitchPixelCommand(Outtake, OutakeSubsystem.SwitchPixelState.SWITCH_HORIZONTAL));
+                }
+            }
         }
+
+        if (gamepad2.dpad_left) {
+            if (inversePixelFlag) {
+                storeState=OutakeSubsystem.SwitchPixelState.SWITCH_LEFT_INVERSE;
+                if(!Elevator.elevateState.toString().equals("HOME")) {
+                    schedule(new SwitchPixelCommand(Outtake, OutakeSubsystem.SwitchPixelState.SWITCH_LEFT_INVERSE));
+                }
+            } else if(!inversePixelFlag)  {
+                storeState=OutakeSubsystem.SwitchPixelState.SWITCH_LEFT;
+                if(Elevator.elevateState.toString()!="HOME") {
+                    schedule(new SwitchPixelCommand(Outtake, OutakeSubsystem.SwitchPixelState.SWITCH_LEFT));
+
+                }
+            }
+        }
+
+        if (gamepad2.dpad_right) {
+            if (inversePixelFlag) {
+                storeState=OutakeSubsystem.SwitchPixelState.SWITCH_RIGHT_INVERSE;
+                if(Elevator.elevateState.toString()!="HOME") {
+                    schedule(new SwitchPixelCommand(Outtake, OutakeSubsystem.SwitchPixelState.SWITCH_RIGHT_INVERSE));
+                }
+            } else if(!inversePixelFlag)  {
+                storeState=OutakeSubsystem.SwitchPixelState.SWITCH_RIGHT;
+                if(Elevator.elevateState.toString()!="HOME") {
+                    schedule(new SwitchPixelCommand(Outtake, OutakeSubsystem.SwitchPixelState.SWITCH_RIGHT));
+                }
+            }
+        }
+
+        // TODO ======================================= PIXEL SHIFTING ========================================================
+        if(gamepad2.left_stick_button && shiftPixel) {
+            schedule(new SwitchPixelCommand(Outtake, Outtake.switchPixelVertical),
+                    new ArmCommand(Outtake, OutakeSubsystem.ArmState.DROP)
+                    );
+            shiftPixel = false;
+        }
+
+
+
+
 
         // TODO ============================================ Drive ===========================================================
         drive.setWeightedDrivePower(
@@ -306,25 +571,16 @@ public class ParasTeleop extends CommandOpMode {
                         -gamepad1.right_stick_x * head
                 )
         );
+
         telemetry.addData("Heading:",drive.robotHeading);
 
 
         drive.update();
 
         Pose2d poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("x", poseEstimate.getX());
-        telemetry.addData("y", poseEstimate.getY());
         telemetry.addData("Left Motor POS", robot.leftElevator.getCurrentPosition());
         telemetry.addData("Left Motor POS", robot.rightElevator.getCurrentPosition());
-        telemetry.addData("red1-",robot.sensorColor1.red());
-        telemetry.addData("blue1-",robot.sensorColor1.blue());
-        telemetry.addData("green1-",robot.sensorColor1.green());
-        telemetry.addData("red2-",robot.sensorColor2.red());
-        telemetry.addData("blue2-",robot.sensorColor2.blue());
-        telemetry.addData("green2-",robot.sensorColor2.green());
-        telemetry.addData("Height" , lifterCounter);
-        telemetry.addData("distance1-",robot.sensorColor1.getDistance(DistanceUnit.MM));
-        telemetry.addData("distance2-",robot.sensorColor2.getDistance(DistanceUnit.MM));
+        telemetry.addData("Height" , ElevatorCounter);
         telemetry.update();
 
     }
@@ -342,5 +598,27 @@ public class ParasTeleop extends CommandOpMode {
         robot.IntakeExtensionLeft.setPower(pow);
     }
 
+    public void inc(double power){
+
+        robot.leftElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()-35);
+        robot.leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.leftElevator.setPower(power);
+
+        robot.rightElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()-35);
+        robot.rightElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightElevator.setPower(power);
+    }
+
+
+    public void dec(double power){
+
+        robot.leftElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()+35);
+        robot.leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.leftElevator.setPower(power);
+
+        robot.rightElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()+35);
+        robot.rightElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightElevator.setPower(power);
+    }
 
 }
