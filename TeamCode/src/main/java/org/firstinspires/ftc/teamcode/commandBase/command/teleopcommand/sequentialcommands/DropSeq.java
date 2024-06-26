@@ -55,6 +55,7 @@ public class DropSeq extends SequentialCommandGroup {
                 new ElevatorCommand(elevator, state, 0),
                 new RotateCommand(outake,OutakeSubsystem.RotateState.PLACE), // 0.5166
                 new ArmCommand(outake, OutakeSubsystem.ArmState.DROP), // 0.3905
+                new IntakeServoCommand(intake, IntakeSubsystem.IntakeServoState.INIT),
                 new FlapperCommand(intake, IntakeSubsystem.FlappersState.FLAPPER_CLOSE)
 
 
@@ -62,5 +63,22 @@ public class DropSeq extends SequentialCommandGroup {
 
     }
 }
-
+/*
+       new IntakeMotorCommand(intake, IntakeSubsystem.RollerIntakeState.INTAKE_OFF),
+                new IntakeServoCommand(intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN),
+                new FlapperCommand(intake, IntakeSubsystem.FlappersState.FLAPPER_OPEN),
+                new WaitCommand(100),
+                new ArmCommand(outake,OutakeSubsystem.ArmState.SAFEDROP),
+                new RotateCommand(outake, OutakeSubsystem.RotateState.PREDROP),
+//                new WaitCommand(100),
+                new ArmCommand(outake,OutakeSubsystem.ArmState.PREDROP),
+//                new WaitCommand(150),
+                new ShoulderCommand(outake, OutakeSubsystem.ShoulderState.DROP),
+                new SwitchPixelCommand(outake, switchState),
+                new ElevatorCommand(elevator, state, 0),
+                new RotateCommand(outake,OutakeSubsystem.RotateState.PLACE), // 0.5166
+                new ArmCommand(outake, OutakeSubsystem.ArmState.DROP), // 0.3905
+                new IntakeServoCommand(intake, IntakeSubsystem.IntakeServoState.INIT),
+                new FlapperCommand(intake, IntakeSubsystem.FlappersState.FLAPPER_CLOSE)
+ */
 

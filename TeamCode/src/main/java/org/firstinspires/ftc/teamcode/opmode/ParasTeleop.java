@@ -13,10 +13,12 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Subsystem.ElevatorSubsytem;
 import org.firstinspires.ftc.teamcode.Subsystem.ExtensionSubsystem;
@@ -59,8 +61,6 @@ public class ParasTeleop extends CommandOpMode {
     public int counter =0;
     public int[] ElevatorStates={1,2,3,4,5,6,7,8,9};  //Use this for counter
     public int ElevatorCounter=0;
-    public static int  droneShoot;
-    public static  int droneCnt=0;
     public static boolean pixelDrop = false;
     SampleMecanumDrive drive = null;
     private final RobotHardware robot = RobotHardware.getInstance();   //Robot instance
@@ -89,6 +89,8 @@ public class ParasTeleop extends CommandOpMode {
 
     public OutakeSubsystem.SwitchPixelState storeState= OutakeSubsystem.SwitchPixelState.SWITCH_HORIZONTAL;
 
+    public boolean beamFlag = true;
+
 
 
  public ElapsedTime timer = new ElapsedTime();
@@ -108,10 +110,12 @@ public class ParasTeleop extends CommandOpMode {
         gamepadEx=new GamepadEx(gamepad1);
 
         gamepadEx2 = new GamepadEx(gamepad2);
+        robot.beam1.setMode(DigitalChannel.Mode.INPUT);
+        robot.beam2.setMode(DigitalChannel.Mode.INPUT);
 
 
         //// TODO ================================================== INIT ================================================
-
+        robot.stackServo.setPosition(Globals.stackInit);
         robot.flappers.setPosition(Globals.flapperClose);
         sleep(200);
         robot.stackServo.setPosition(Globals.stackInit);
@@ -126,7 +130,7 @@ public class ParasTeleop extends CommandOpMode {
 
         while(opModeInInit())
         {
-            Extension(0,1);
+
             gamepad1.rumble(1, 1, 400);
 
 
@@ -146,7 +150,7 @@ public class ParasTeleop extends CommandOpMode {
                 sliderPos=0;
             }
             Elevator.extendTo(ElevatorPos,0.9);
-            Elevator.extendTo(sliderPos,1);
+            Extension(sliderPos,1);
 
         }
 
@@ -160,7 +164,7 @@ public class ParasTeleop extends CommandOpMode {
                 new GripperCommand(Outtake, OutakeSubsystem.GripperState.GRIP_RIGHT_OPEN)
         );
 
-        // TODO ============================================= PIXEL OUT AND OFF TOGGLE =====================================================
+        // TODO ============================================= Ground Level Intake and Intake OFF =====================================================
         gamepadEx.getGamepadButton(GamepadKeys.Button.B).toggleWhenPressed(
                 new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON),
                 new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_OFF)
@@ -193,7 +197,8 @@ public class ParasTeleop extends CommandOpMode {
         }
         // TODO =============================================  CHANGE ELEVATOR POS LOGIC ===============================================
         if(gamepad2.dpad_up && isElevate){
-            if(ElevatorCounter<9) {
+            if(ElevatorCounter<9)
+            {
                 if(ElevatorCounter == 0){
                     schedule(new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HOME, 0));
                 }
@@ -278,20 +283,30 @@ public class ParasTeleop extends CommandOpMode {
 
         // TODO ============================================ Intake Position ===========================================================
         if(gamepad1.right_bumper && !isDrop){
-            head = 0.5;
-            strafe = 0.3;
-            straight = 0.8;
-            schedule( new GripperCommand(Outtake, OutakeSubsystem.GripperState.GRIP_OPEN));
-            sleep(100);
-            schedule( new IntakePosSeq(Outtake, Intake,Elevator));
-            extendit = FALSE;
-            isIntake = FALSE;
-            isElevate = false;
-            shiftPixel = false;
+            if(robot.beam1.getState()==false && robot.beam2.getState()==false){
+                schedule( new TransferSeq(Intake, Outtake, Elevator, Extension),
+                        new WaitCommand(100),
+                        new InstantCommand(()->gamepad1.rumble(1, 1, 400)
+                        ));
+            }
+            else{
+                head = 0.5;
+                strafe = 0.3;
+                straight = 0.8;
+                schedule( new GripperCommand(Outtake, OutakeSubsystem.GripperState.GRIP_OPEN),
+                        new WaitCommand(100),
+                        new IntakePosSeq(Outtake, Intake,Elevator)
+                );
+                extendit = FALSE;
+                isIntake = FALSE;
+                isElevate = false;
+                shiftPixel = false;
+                beamFlag = true;
+            }
         }
 
 
-        // TODO ============================================ Ground Level Intake ===========================================================
+        // TODO ============================================ REVERSE INTAKE ===========================================================
         if(gamepad2.b){
             schedule(  new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.PIXEL_OUT)); // Intaking the Pixel From ground
         }
@@ -301,28 +316,31 @@ public class ParasTeleop extends CommandOpMode {
             straight = 0.5;
         }
 
-       // TODO ============================================ Outtake ===========================================================
+       // TODO ============================================ Transfer ===========================================================
       // Transferring the pixel when colour sensor gets active
-        if(((robot.sensorColor1.red()>=ThresholdColor || robot.sensorColor1.blue()>=ThresholdColor || robot.sensorColor1.green()>=ThresholdColor ) && robot.sensorColor1.getDistance(DistanceUnit.MM)<=ThresholdDistance)
-                && ((robot.sensorColor2.red()>=ThresholdColor || robot.sensorColor2.blue()>=ThresholdColor || robot.sensorColor2.green()>=ThresholdColor) && robot.sensorColor2.getDistance(DistanceUnit.MM)<=ThresholdDistance)){
+        if((robot.beam1.getState() == false && robot.beam2.getState() == false)){
 
-            if(extensionFlag && robot.IntakeExtensionLeft.getCurrentPosition()<10)
+            telemetry.addLine("Im inside beam");
+            if(extensionFlag && robot.IntakeExtensionLeft.getCurrentPosition()<100 && beamFlag)
             {
+                telemetry.addLine("Pluunge seq");
+
                 schedule( new TransferSeq(Intake, Outtake, Elevator, Extension),
                         new WaitCommand(100),
                         new InstantCommand(()->gamepad1.rumble(1, 1, 400)
-));
+                        ));
+                head = 0.5;
+                strafe = 0.3;
+                straight = 0.8;
+                isDrop = true;
+                beamFlag = false;
             }
-            head = 0.5;
-            strafe = 0.3;
-            straight = 0.8;
-            isDrop = true;
         }
 
         //////// Transferring logic ends
         if(gamepad2.y) // Forcefully Executing the Transfer Sequence
         {
-            if(robot.IntakeExtensionLeft.getCurrentPosition()<10){
+            if(robot.IntakeExtensionLeft.getCurrentPosition()<100  && beamFlag==false){
                 schedule( new TransferSeq(Intake, Outtake, Elevator, Extension),
                         new WaitCommand(100),
                         new InstantCommand(()->{
@@ -333,16 +351,18 @@ public class ParasTeleop extends CommandOpMode {
                 strafe = 0.3;
                 straight = 0.8;
                 isDrop = true;
-                extensionFlag = false;
             }
         }
 
+        // TODO ============================================================ RESET ========================================================================
         if(gamepad1.back){
             extendit = false;
             isIntake = false;
             isDrop = true;
-            extensionFlag = false;
+            extensionFlag = true;
         }
+
+        // TODO ============================================================== DROPPING SEQUENCE ===========================================================
         if(gamepad1.left_bumper && isDrop)
         {
             head = 0.5;
@@ -402,7 +422,6 @@ public class ParasTeleop extends CommandOpMode {
             extendit = true;
             isIntake = true;
             isDrop = false;
-            extensionFlag = false;
             isElevate = true;
             shiftPixel = true;
         }
@@ -421,7 +440,7 @@ public class ParasTeleop extends CommandOpMode {
             schedule( new GripperCommand(Outtake, OutakeSubsystem.GripperState.GRIP_OPEN));
         }
 
-        // TODO ============================================ Reverse Intake ===========================================================
+        // TODO ============================================ NULL ===========================================================
         if(gamepad1.left_trigger>0)
         {
 
@@ -461,6 +480,7 @@ public class ParasTeleop extends CommandOpMode {
             Extension.Extension(50, 0.4);
         }
 
+        // TODO ================================================= Ratchet Open ===============================================================
         if(gamepad2.back){
             robot.ratchet.setPosition(Globals.RachetOpen);
         }
@@ -551,6 +571,7 @@ public class ParasTeleop extends CommandOpMode {
             }
         }
 
+
         // TODO ======================================= PIXEL SHIFTING ========================================================
         if(gamepad2.left_stick_button && shiftPixel) {
             schedule(new SwitchPixelCommand(Outtake, Outtake.switchPixelVertical),
@@ -579,8 +600,15 @@ public class ParasTeleop extends CommandOpMode {
 
         Pose2d poseEstimate = drive.getPoseEstimate();
         telemetry.addData("Left Motor POS", robot.leftElevator.getCurrentPosition());
-        telemetry.addData("Left Motor POS", robot.rightElevator.getCurrentPosition());
+        telemetry.addData("Right Motor POS", robot.rightElevator.getCurrentPosition());
+        telemetry.addData("Extension POS", robot.IntakeExtensionLeft.getCurrentPosition());
+        telemetry.addData("Left Motor Current", robot.leftElevator.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("Right Motor Current", robot.rightElevator.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Height" , ElevatorCounter);
+        telemetry.addData("Beam1",robot.beam1.getState());
+        telemetry.addData("Beam2",robot.beam2.getState());
+        telemetry.addData("Flag",beamFlag);
+        telemetry.addData("extensionFlag",extensionFlag);
         telemetry.update();
 
     }

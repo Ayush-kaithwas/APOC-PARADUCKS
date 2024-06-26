@@ -78,7 +78,6 @@ public class ElevatorSubsytem extends SubsystemBase {
 }
 
 public void extendTo(int targetPosition, double power){
-
     robot.leftElevator.setTargetPosition(targetPosition);
     robot.leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     robot.leftElevator.setPower(power);

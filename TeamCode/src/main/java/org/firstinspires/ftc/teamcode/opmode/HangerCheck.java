@@ -37,9 +37,23 @@ public class HangerCheck extends LinearOpMode {
         while (opModeIsActive()){
 
             if(gamepad1.dpad_up){
-                executeHanger(targetPos,1);
-            } else if (gamepad1.dpad_down) {
-                executeHanger(-targetPos,1);
+                executeHanger(1);
+            }
+            else if (gamepad1.dpad_down) {
+                goDown(1);
+            }
+            else if(gamepad1.x){
+                hangerMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                hangerMotor1.setPower(1);
+            }
+            else if(gamepad1.y){
+                hangerMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                hangerMotor1.setPower(-1);
+            } else if (gamepad1.b) {
+                hangerMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                hangerMotor1.setPower(0);
             }
 
 
@@ -55,13 +69,15 @@ public class HangerCheck extends LinearOpMode {
 
     }
 
-    public void executeHanger(int targetPosition,double power){
-        hangerMotor1.setTargetPosition(targetPosition);
+    public void executeHanger(double power){
+        hangerMotor1.setTargetPosition(hangerMotor1.getCurrentPosition() + 50);
         hangerMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hangerMotor1.setPower(power);
+    }
 
-        hangerMotor2.setTargetPosition(targetPosition);
-        hangerMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hangerMotor2.setPower(power);
+    public void goDown(double POW){
+        hangerMotor1.setTargetPosition(hangerMotor1.getCurrentPosition() - 50);
+        hangerMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hangerMotor1.setPower(POW);
     }
 }

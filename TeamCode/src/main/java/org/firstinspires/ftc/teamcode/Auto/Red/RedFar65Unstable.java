@@ -63,14 +63,7 @@ public class RedFar65Unstable extends LinearOpMode {
         robot.enabled = true;
 
         //REDO ROBOT INIT
-        robot.flappers.setPosition(Globals.flapperClose);
-        sleep(200);
-        robot.stackServo.setPosition(Globals.stackInit);
-        sleep(150);
-        robot.Arm.setPosition(Globals.ArmInit);
-        setServoShoulder(Globals.shoulderInit);
-        robot.rotate.setPosition(Globals.rotateInit);
-        robot.switchPixel.setPosition(Globals.switchPixelInit);
+        inIt();
 
 
         PropPipeline propPipeline = new PropPipeline();
@@ -106,7 +99,7 @@ public class RedFar65Unstable extends LinearOpMode {
         }
         portal.close();
 
-        Pose2d startPose = new Pose2d(-35.5, -62, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(-35.5, -62, Math.toRadians(0));
         drive.setPoseEstimate(startPose);
 
 
@@ -496,7 +489,7 @@ public class RedFar65Unstable extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Outtake.ArmServo(0.3788))
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Outtake.rotateInit())
 
-                .lineToConstantHeading(new Vector2d(-39, -30))  // Dropping Purple Pixel
+                .lineToConstantHeading(new Vector2d(-36, -30))  // Dropping Purple Pixel
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> Outtake.gripOpenBoth())
                 .waitSeconds(0.2)
 
@@ -527,7 +520,7 @@ public class RedFar65Unstable extends LinearOpMode {
                 // todo write trajectories to the backdrop
                 .addTemporalMarker(()-> detect())
                 .lineToConstantHeading(new Vector2d(-35, -57))
-                .UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> Intake.intakeStart(0.6))
+                .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Intake.intakeStart(0.6))
                 .UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> Intake.setIntakeServo(Globals.stackDown))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Extension.Extension(50,1))
 
@@ -568,7 +561,7 @@ public class RedFar65Unstable extends LinearOpMode {
 
 // TODO ========================== DROPPING THE YELLOW AND WHITE PIXEL ==========================================================
 
-                .lineToConstantHeading(new Vector2d(52,-38))   // TODO (AT BACKDROP)
+                .lineToConstantHeading(new Vector2d(52,-39.5))   // TODO (AT BACKDROP)
                 .addTemporalMarker(()-> Outtake.gripOpenBoth())
                 .waitSeconds(0.2)
                 .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
@@ -602,7 +595,7 @@ public class RedFar65Unstable extends LinearOpMode {
                 .setConstraints(SampleMecanumDrive.getVelocityConstraint(40, Math.toRadians(136.52544), DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(40))
 
                 // TODO TAKING PIXELS FROM STACK
-                .lineToLinearHeading(new Pose2d(-59, 40, Math.toRadians(120))) // TODO STACK POSE
+                .lineToLinearHeading(new Pose2d(-59, -40, Math.toRadians(-60))) // TODO STACK POSE
                 .UNSTABLE_addTemporalMarkerOffset(-0.6, ()-> Intake.rollOutside(0.9))
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Intake.setIntakeServo(Globals.stackThree))
                 .waitSeconds(0.1)

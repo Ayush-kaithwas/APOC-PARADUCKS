@@ -31,12 +31,12 @@ public class Globals {
 
     public static  int hangpos = -2400;
 
-    public static int hang = -300;
+    public static int hang = -500;
 
 
     // TODO==========================================================  Intake Servo Value ====================================================
-    public static double stackInit=0.8466;//0.8405;
-    public static double stackDown=0.56;//0.444;
+    public static double stackInit=1;//0.8405;
+    public static double stackDown=0.638;//0.56;//0.444;
     public static double stackThree=0.5616;
     public static double stackFour=0.608;
     public static double stackFive=0.6338;
@@ -47,11 +47,11 @@ public class Globals {
     //Intake values
     public static double flapperOpen=0.88;
     public static double flapperMid=0.358;
-    public static double flapperClose=0.25;
+    public static double flapperClose=0.28;// 0.25
 
 
     // TODO==========================================================  Shoulder Servo Value ====================================================
-    public static double shoulderInit=0.8166;
+    public static double shoulderInit=0.73;//0.714;//0.8166;
     public static double shoulderSafePick= 0.7;
     public static double shoulderSafePick1= 0.65;
     public static double shoulderSafePick2= 0.7;
@@ -93,7 +93,7 @@ public class Globals {
     public static double rotateInit=0.5;//0.426;
     public static double rotatePick=0.5;
     public static double rotateDrop= 0.5166; //0.4855;
-    public static double rotatePreDrop=0.4655;
+    public static double rotatePreDrop=0.5;
 
 
     // TODO=============================================================== x Extension Value ===================================================
@@ -108,7 +108,7 @@ public class Globals {
     public static double ArmInit=0.87166 ;//0.623;
     public static double ArmMid=0.8877;
     public static double ArmPick=0.8466;//0.831;//0.81055;
-    public static double ArmSafePick=0.9155;
+    public static double ArmSafePick=0.830;//0.9155;
     public static double ArmPrePick=0.851666;
     public static double ArmDrop=0.392;//0.44;//0.3966;
     public static double ArmSafeDrop=0.8655;

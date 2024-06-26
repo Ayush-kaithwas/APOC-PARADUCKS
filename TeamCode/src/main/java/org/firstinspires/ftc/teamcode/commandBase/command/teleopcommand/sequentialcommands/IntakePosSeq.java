@@ -18,24 +18,14 @@ import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.Shoulde
 import org.firstinspires.ftc.teamcode.commandBase.command.instantcommand.SwitchPixelCommand;
 
 public class IntakePosSeq extends SequentialCommandGroup {
-    public IntakePosSeq(OutakeSubsystem Outake, IntakeSubsystem Intake) {
-        super(
-                new FlapperCommand(Intake, IntakeSubsystem.FlappersState.FLAPPER_CLOSE),
-                new WaitCommand(100),
-//                new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HOME),
-                new IntakeServoCommand(Intake, IntakeSubsystem.IntakeServoState.INIT),
-                new ArmCommand(Outake, OutakeSubsystem.ArmState.INIT),
-//                new WaitCommand(250),
-                new ShoulderCommand(Outake, OutakeSubsystem.ShoulderState.INIT),
-                new RotateCommand(Outake, OutakeSubsystem.RotateState.INIT),
-                new SwitchPixelCommand(Outake, OutakeSubsystem.SwitchPixelState.SWITCH_INIT),
-                new GripperCommand(Outake, OutakeSubsystem.GripperState.GRIP_SAFE)
-        );
-    }
+
     public IntakePosSeq(OutakeSubsystem Outake, IntakeSubsystem Intake,ElevatorSubsytem Elevator) {
         super(
                 new GripperCommand(Outake, OutakeSubsystem.GripperState.GRIP_OPEN),
+                new IntakeServoCommand(Intake, IntakeSubsystem.IntakeServoState.INIT),
                 new FlapperCommand(Intake, IntakeSubsystem.FlappersState.FLAPPER_CLOSE),
+                new WaitCommand(100),
+                new IntakeServoCommand(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN),
                 new ElevatorCommand(Elevator, ElevatorSubsytem.ElevateState.HOME,0),
                 new IntakeServoCommand(Intake, IntakeSubsystem.IntakeServoState.INIT),
                 new ArmCommand(Outake, OutakeSubsystem.ArmState.INIT),
@@ -46,4 +36,6 @@ public class IntakePosSeq extends SequentialCommandGroup {
                 new GripperCommand(Outake, OutakeSubsystem.GripperState.GRIP_SAFE)
         );
     }
+
+
 }

@@ -158,7 +158,8 @@ public class BlueClose60Unstable extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-47, 55))//45
                 .addTemporalMarker(()->Extension.Extension(50,0.9))
 
-                .lineToLinearHeading(new Pose2d(-61, 45.8, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)
+                .lineToLinearHeading(new Pose2d(-61, 45, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)
+//                .lineToLinearHeading(new Pose2d(-61, 45.8, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)BEST
 
                 .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFive))
                 .waitSeconds(0.1)
@@ -167,11 +168,13 @@ public class BlueClose60Unstable extends LinearOpMode {
                 .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFive))
                 .waitSeconds(0.5)
 
-                .lineToConstantHeading(new Vector2d(-53, 45.8))
+//                .lineToConstantHeading(new Vector2d(-53, 45.8))//Bets
+                .lineToConstantHeading(new Vector2d(-53, 45))
 
 
 
-                .lineToLinearHeading(new Pose2d(-61, 45.8001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)
+//                .lineToLinearHeading(new Pose2d(-61, 45.8001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)//Best
+                .lineToLinearHeading(new Pose2d(-61, 45.001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)//Best
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> {Extension.Extension(0,0.9);Intake.setIntakeServo(Globals.stackFive);})
                 .waitSeconds(0.1)
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> Intake.setIntakeServo(Globals.stackDown))
@@ -205,7 +208,7 @@ public class BlueClose60Unstable extends LinearOpMode {
 
                 // todo write command to drop yellow
 
-                .lineToLinearHeading(new Pose2d(47,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
+                .lineToLinearHeading(new Pose2d(47.5,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
 
                 // DROPPING SEQ
                 .UNSTABLE_addTemporalMarkerOffset(-0.4,()-> Outtake.ArmServo(0.875))
@@ -218,33 +221,39 @@ public class BlueClose60Unstable extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> robot.flappers.setPosition(Globals.flapperClose))
                 .addTemporalMarker(()-> {;Outtake.setRotate(0.7355);Outtake.setSwitchPixel(0.2966);})
                 //2 pxl dropped
-                .lineToLinearHeading(new Pose2d(47.5001,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
+                .lineToLinearHeading(new Pose2d(47.8001,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
+                .waitSeconds(0.15)
                 .addTemporalMarker(()-> Outtake.gripOpenBoth())
                 .waitSeconds(0.15)
                 .addTemporalMarker(()->{Outtake.setSwitchPixel(Globals.switchPixelInit);})
                 .addTemporalMarker(()->{Outtake.shoulderInit();Outtake.rotateInit();Intake.stackInit();})
                 .addTemporalMarker(()->Elevator.extendTo(Globals.lifterDown,1))
                 .waitSeconds(0.01)
+
+
+
+
                 .build();
+
+
 
 
 
 
         //TODO LEFT
         TrajectorySequence left = drive.trajectorySequenceBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(30, 31))//Left30.3, 31E
+
+                .lineToConstantHeading(new Vector2d(31.2, 31))//Left30.3, 31E
                 .UNSTABLE_addTemporalMarkerOffset(-0.1,()->{intakeMotorCounts(70,0.9);})//-65Best //time can be saved here
                 //todo purple dropped
 
-                .lineToConstantHeading(new Vector2d(44.5,39))//can remove this
+                .lineToConstantHeading(new Vector2d(44.5,41))//can remove this
                 .UNSTABLE_addTemporalMarkerOffset(-1,()->{setServoShoulder(Globals.shoulderDrop);Outtake.ArmServo(Globals.autoArmYellow);})//-0.8b
-                .lineToConstantHeading(new Vector2d(48.8,39))//48.5
+                .lineToConstantHeading(new Vector2d(48.8,41))//48.5
                 .waitSeconds(0.01)
                 .addTemporalMarker(()->{Outtake.gripOpenBoth(); robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);})
                 .waitSeconds(0.15)
                 //todo yellow dropped YELLOW   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-                //Todo first cycle-----------------------------------------------------------------------------------------------------------------------------------------
 
                 //Todo first cycle-----------------------------------------------------------------------------------------------------------------------------------------
                 //todo write trajectories shifting from backdrop towards wall   -----------------------
@@ -264,23 +273,23 @@ public class BlueClose60Unstable extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-47, 55))//45
                 .addTemporalMarker(()->Extension.Extension(50,0.9))
 
-                .lineToLinearHeading(new Pose2d(-61, 45.8, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)
+                .lineToLinearHeading(new Pose2d(-61, 44.6, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)
+//                .lineToLinearHeading(new Pose2d(-61, 45.8, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)BEST
 
                 .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFive))
                 .waitSeconds(0.1)
                 .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFour))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Intake.setIntakeServo(Globals.stackFour))
                 .waitSeconds(0.1)
                 .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFive))
                 .waitSeconds(0.5)
-//                .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackThree))
-//                .waitSeconds(0.2)
-                .lineToConstantHeading(new Vector2d(-53, 45.8))
+
+//                .lineToConstantHeading(new Vector2d(-53, 45.8))//Bets
+                .lineToConstantHeading(new Vector2d(-53, 44.6))
 
 
-//                .lineToLinearHeading(new Pose2d(-61, 45.8001, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)  Bets
 
-                .lineToLinearHeading(new Pose2d(-61, 45.8001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)
+//                .lineToLinearHeading(new Pose2d(-61, 45.8001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)//Best
+                .lineToLinearHeading(new Pose2d(-61, 44.6001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)//Best
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> {Extension.Extension(0,0.9);Intake.setIntakeServo(Globals.stackFive);})
                 .waitSeconds(0.1)
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> Intake.setIntakeServo(Globals.stackDown))
@@ -314,7 +323,7 @@ public class BlueClose60Unstable extends LinearOpMode {
 
                 // todo write command to drop yellow
 
-                .lineToLinearHeading(new Pose2d(47,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
+                .lineToLinearHeading(new Pose2d(47.5,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
 
                 // DROPPING SEQ
                 .UNSTABLE_addTemporalMarkerOffset(-0.4,()-> Outtake.ArmServo(0.875))
@@ -328,6 +337,7 @@ public class BlueClose60Unstable extends LinearOpMode {
                 .addTemporalMarker(()-> {;Outtake.setRotate(0.7355);Outtake.setSwitchPixel(0.2966);})
                 //2 pxl dropped
                 .lineToLinearHeading(new Pose2d(47.5001,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
+                .waitSeconds(0.15)
                 .addTemporalMarker(()-> Outtake.gripOpenBoth())
                 .waitSeconds(0.15)
                 .addTemporalMarker(()->{Outtake.setSwitchPixel(Globals.switchPixelInit);})
@@ -335,7 +345,9 @@ public class BlueClose60Unstable extends LinearOpMode {
                 .addTemporalMarker(()->Elevator.extendTo(Globals.lifterDown,1))
                 .waitSeconds(0.01)
 
+
                 .build();
+
 
 
         //TODO RIGHT
@@ -352,6 +364,7 @@ public class BlueClose60Unstable extends LinearOpMode {
                 .waitSeconds(0.15)
                 //todo yellow dropped YELLOW   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
+
                 //Todo first cycle-----------------------------------------------------------------------------------------------------------------------------------------
                 //todo write trajectories shifting from backdrop towards wall   -----------------------
 
@@ -370,23 +383,22 @@ public class BlueClose60Unstable extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-47, 55))//45
                 .addTemporalMarker(()->Extension.Extension(50,0.9))
 
-                .lineToLinearHeading(new Pose2d(-61, 45.8, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)
+                .lineToLinearHeading(new Pose2d(-61, 44.6, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)Best
 
                 .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFive))
                 .waitSeconds(0.1)
                 .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFour))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Intake.setIntakeServo(Globals.stackFour))
                 .waitSeconds(0.1)
                 .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFive))
                 .waitSeconds(0.5)
-//                .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackThree))
-//                .waitSeconds(0.2)
-                .lineToConstantHeading(new Vector2d(-53, 45.8))
+
+//                .lineToConstantHeading(new Vector2d(-53, 45.8))//Bets
+                .lineToConstantHeading(new Vector2d(-53, 45))
 
 
-//                .lineToLinearHeading(new Pose2d(-61, 45.8001, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)  Bets
 
-                .lineToLinearHeading(new Pose2d(-61, 45.8001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)
+//                .lineToLinearHeading(new Pose2d(-61, 45.8001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)//Best
+                .lineToLinearHeading(new Pose2d(-61, 44.6001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)//Best
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> {Extension.Extension(0,0.9);Intake.setIntakeServo(Globals.stackFive);})
                 .waitSeconds(0.1)
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> Intake.setIntakeServo(Globals.stackDown))
@@ -420,7 +432,7 @@ public class BlueClose60Unstable extends LinearOpMode {
 
                 // todo write command to drop yellow
 
-                .lineToLinearHeading(new Pose2d(47,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
+                .lineToLinearHeading(new Pose2d(47.5,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
 
                 // DROPPING SEQ
                 .UNSTABLE_addTemporalMarkerOffset(-0.4,()-> Outtake.ArmServo(0.875))
@@ -434,6 +446,7 @@ public class BlueClose60Unstable extends LinearOpMode {
                 .addTemporalMarker(()-> {;Outtake.setRotate(0.7355);Outtake.setSwitchPixel(0.2966);})
                 //2 pxl dropped
                 .lineToLinearHeading(new Pose2d(47.5001,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
+                .waitSeconds(0.15)
                 .addTemporalMarker(()-> Outtake.gripOpenBoth())
                 .waitSeconds(0.15)
                 .addTemporalMarker(()->{Outtake.setSwitchPixel(Globals.switchPixelInit);})
@@ -441,7 +454,8 @@ public class BlueClose60Unstable extends LinearOpMode {
                 .addTemporalMarker(()->Elevator.extendTo(Globals.lifterDown,1))
                 .waitSeconds(0.01)
 
-                .build();
+
+                        .build();
 
 
 
@@ -449,11 +463,11 @@ public class BlueClose60Unstable extends LinearOpMode {
         waitForStart();
 
         if(marker==Location.LEFT){
-//            drive.followTrajectorySequence(left);
+            drive.followTrajectorySequence(left);
         } else if (marker==Location.RIGHT) {
             drive.followTrajectorySequence(right);
         }else {
-//            drive.followTrajectorySequence(center);
+            drive.followTrajectorySequence(center);
         }
         while (opModeIsActive()){
             telemetry.update();
@@ -503,28 +517,7 @@ public class BlueClose60Unstable extends LinearOpMode {
 }
 
 /*
-
-  //todo purple drop pose  ----------------------------------------------------------
-                .lineToConstantHeading(new Vector2d(22, 32))
-                .lineToConstantHeading(new Vector2d(10, 32))
-
-                //todo code to drop purple
-                .UNSTABLE_addTemporalMarkerOffset(-0.1,()->{intakeMotorCounts(70,0.9);})
-                .UNSTABLE_addTemporalMarkerOffset(-1,()->{setServoShoulder(Globals.shoulderDrop);Outtake.ArmServo(Globals.autoArmYellow);})
-
-                //todo purple dropped   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-
-                //todo backdrop pose for YELLOW-----------------------------------------------------
-
-                .lineToConstantHeading(new Vector2d(48.8,27.8))
-                .waitSeconds(0.01)
-                .lineToConstantHeading(new Vector2d(48.80001,27.8))  //backdrop re-lock
-                .addTemporalMarker(()->{Outtake.gripOpenBoth();})
-                .waitSeconds(0.1)
-                .addTemporalMarker(()->setServoShoulder(Globals.shoulderYellowSafe))
-
-                //todo yellow dropped YELLOW   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Right best
 
                 //Todo first cycle-----------------------------------------------------------------------------------------------------------------------------------------
                 //todo write trajectories shifting from backdrop towards wall   -----------------------
@@ -533,116 +526,88 @@ public class BlueClose60Unstable extends LinearOpMode {
 
 
                 //Sequence for robot init        and     setting stack height //todo stack height (autostackInit)
-                .UNSTABLE_addTemporalMarkerOffset(-0.3,()->{Outtake.setSwitchPixel(Globals.switchPixelInit);Intake.setIntakeServo(Globals.stackInit);}) //Outtake.ArmServo(Globals.ArmInit);
-                .UNSTABLE_addTemporalMarkerOffset(-0.1,()->{Outtake.shoulderInit();Outtake.rotateInit();;robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);})
+                .UNSTABLE_addTemporalMarkerOffset(-0.3,()->{Outtake.setSwitchPixel(Globals.switchPixelInit);Outtake.ArmServo(Globals.ArmInit);})
+                .UNSTABLE_addTemporalMarkerOffset(-0.1,()->{ Outtake.shoulderInit();Outtake.rotateInit();robot.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);})
+                .UNSTABLE_addTemporalMarkerOffset(0,()->Intake.rollOutside(0.7))
                 .waitSeconds(0.01)
 
 
                 //todo write trajectories to towards JUST BEFOREstack--------------------------------------------
 
-                .lineToConstantHeading(new Vector2d(-45, 55))
-                .UNSTABLE_addTemporalMarkerOffset(-0.1,()->{ Intake.rollOutside(0.7);})
+                .lineToConstantHeading(new Vector2d(-47, 55))//45
+                .addTemporalMarker(()->Extension.Extension(50,0.9))
 
+                .lineToLinearHeading(new Pose2d(-61, 45, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)
+//                .lineToLinearHeading(new Pose2d(-61, 45.8, Math.toRadians(55)))//new Pose2d(-62, 40, Math.toRadians(60)BEST
 
-                //SLOW DOWN FOR BETTER STRAFE
-
-//                .setConstraints(SampleMecanumDrive.getVelocityConstraint(40, Math.toRadians(136.52544), DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(40))
-
-                .lineToLinearHeading(new Pose2d(-60.5, 45.4, Math.toRadians(60)))//new Pose2d(-62, 40, Math.toRadians(60)
-
-
-//                .resetConstraints()
-
-
-
-                .lineToLinearHeading(new Pose2d(-53, 45.5, Math.toRadians(60)))//--55, 42B
-
-//                .UNSTABLE_addTemporalMarkerOffset(-0.1,()->{ Intake.intakeStart(0.5);})
-//                .lineToLinearHeading(new Pose2d(-60, 42, Math.toRadians(40)))
-
-                .lineToLinearHeading(new Pose2d(-61, 45.5, Math.toRadians(60)))
-                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackFive))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Intake.setIntakeServo(Globals.stackFive))
+                .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFive))
                 .waitSeconds(0.1)
-                .addTemporalMarker(()-> Intake.setIntakeServo(Globals.stackFour))
-//                .UNSTABLE_addTemporalMarkerOffset(0, ()-> Intake.setIntakeServo(Globals.stackFour))
+                .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFour))
+                .waitSeconds(0.1)
+                .addTemporalMarker(()->Intake.setIntakeServo(Globals.stackFive))
                 .waitSeconds(0.5)
 
-//                .UNSTABLE_addTemporalMarkerOffset(-0.1, ()->Elevator.extendTo(0, 1))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.1,()-> Outtake.setServoShoulder(Globals.shoulderInit))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> Intake.rollOutside(0.9))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Intake.setIntakeServo(Globals.stackThree))
-//                .waitSeconds(0.1)
-//                .UNSTABLE_addTemporalMarkerOffset(0, ()-> Intake.setIntakeServo(Globals.stackDown))
-//                .waitSeconds(0.3)
-
-//                .UNSTABLE_addTemporalMarkerOffset(-0.6,()->{ Intake.rollOutside(0.9);})
-//                .UNSTABLE_addTemporalMarkerOffset(-0.6,()->{ Intake.setIntakeServo(Globals.stackDown);Extension.Extension(0,0);})
+//                .lineToConstantHeading(new Vector2d(-53, 45.8))//Bets
+                .lineToConstantHeading(new Vector2d(-53, 45))
 
 
-//                .waitSeconds(0.3)
 
-                //                //SLOW DOWN FOR BETTER STRAFE
+//                .lineToLinearHeading(new Pose2d(-61, 45.8001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)//Best
+                .lineToLinearHeading(new Pose2d(-61, 45.001, Math.toRadians(45)))//new Pose2d(-62, 40, Math.toRadians(60)//Best
+                .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> {Extension.Extension(0,0.9);Intake.setIntakeServo(Globals.stackFive);})
+                .waitSeconds(0.1)
+                .UNSTABLE_addTemporalMarkerOffset(0, ()-> Intake.setIntakeServo(Globals.stackDown))
+                .waitSeconds(0.3)
 
-                //todo write trajectory towards wall to drop white----------------------------------------------
-                .lineToLinearHeading(new Pose2d(-38, 57, 0))
-                .resetConstraints()
-                .UNSTABLE_addTemporalMarkerOffset(-0.7, ()-> Intake.intakeStart(0.4))
+//                .lineToConstantHeading(new Vector2d(-37, 55))//45///Bestt
+                .lineToLinearHeading(new Pose2d(-37,57,Math.toRadians(0)))
+                .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Intake.intakeStart(0.6))
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Intake.setIntakeServo(Globals.stackDown))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Extension.Extension(50,1))
 
 
-                //todo extra pixel thrown out and extension inside for perfect transfer xxxxxxxxxxxxxxxxxxxxxxxx
-//
-//
-//                //todo going toward back drop
-//                .lineToLinearHeading(new Pose2d(40,57,Math.toRadians(0)))   // TODO (AT BACKDROP)
+                .lineToLinearHeading(new Pose2d(40,57,Math.toRadians(0)))   // TODO (AT BACKDROP)
 //
 //                // TRANSFER SEQUENCE
-//
-//
-//                .UNSTABLE_addTemporalMarkerOffset(-0.6, ()-> Intake.setIntakeServo(Globals.stackDown))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.6,()-> Outtake.setServoShoulder(Globals.shoulderSafePick))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.6,()-> Outtake.setSwitchPixel(Globals.switchPixelInit))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.6, ()-> Intake.intakeStop())
-//                .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> robot.flappers.setPosition(Globals.flapperOpen))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.6, ()-> Outtake.gripSafeOpen())
-//                .UNSTABLE_addTemporalMarkerOffset(-0.6,()-> Elevator.extendTo(Globals.lifterDown,1))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> Outtake.rotatePick())
-//                .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> Outtake.ArmServo(Globals.ArmSafePick))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Outtake.setServoShoulder(Globals.shoulderInit))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.2, ()->Outtake.ArmServo(Globals.ArmPick))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.1,()-> Outtake.setServoShoulder(Globals.shoulderPick))
-//                .waitSeconds(0.1)
-//                .UNSTABLE_addTemporalMarkerOffset(0,()->Outtake.gripCloseBoth())
-//
-//
-//
-//
-//                .lineToLinearHeading(new Pose2d(47,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
-//
-//                // DROPPING SEQ
-//                .UNSTABLE_addTemporalMarkerOffset(-0.4,()-> Outtake.ArmServo(0.875))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.4,()-> Outtake.rotatePreDrop())
-//                .waitSeconds(0.1)
-//                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> {Outtake.setServoShoulder(0.2177);Elevator.extendTo(Globals.lifterFive,1);})
-//                .UNSTABLE_addTemporalMarkerOffset(0, ()-> Outtake.ArmServo(0.4466))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Outtake.setSwitchPixel(Globals.switchPixelDrop))
-//                .UNSTABLE_addTemporalMarkerOffset(-0.2, ()->Outtake.rotateDrop())// change this
-//                .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> robot.flappers.setPosition(Globals.flapperClose))
-//                .addTemporalMarker(()-> {;Outtake.setRotate(0.7355);Outtake.setSwitchPixel(0.2966);})
-//                //2 pxl dropped
-//                .lineToLinearHeading(new Pose2d(47.5001,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
-//                .addTemporalMarker(()-> Outtake.gripOpenBoth())
-//                .waitSeconds(0.15)
-//                .addTemporalMarker(()->{Outtake.setSwitchPixel(Globals.switchPixelInit);})
-//                .addTemporalMarker(()->{Outtake.shoulderInit();Outtake.rotateInit();Intake.stackInit();})
-//                .addTemporalMarker(()->Elevator.extendTo(Globals.lifterDown,1))
-//                .waitSeconds(0.01)
-//
-//
-//
-//
+                .UNSTABLE_addTemporalMarkerOffset(-0.6, ()-> Intake.setIntakeServo(Globals.stackDown))
+                .UNSTABLE_addTemporalMarkerOffset(-0.6,()-> Outtake.setServoShoulder(Globals.shoulderSafePick))
+                .UNSTABLE_addTemporalMarkerOffset(-0.6,()-> Outtake.setSwitchPixel(Globals.switchPixelInit))
+                .UNSTABLE_addTemporalMarkerOffset(-0.6, ()-> Intake.intakeStop())
+                .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> robot.flappers.setPosition(Globals.flapperOpen))
+                .UNSTABLE_addTemporalMarkerOffset(-0.6, ()-> Outtake.gripSafeOpen())
+                .UNSTABLE_addTemporalMarkerOffset(-0.6,()-> Elevator.extendTo(Globals.lifterDown,1))
+                .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> Outtake.rotatePick())
+                .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> Outtake.ArmServo(Globals.ArmSafePick))
+                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Outtake.setServoShoulder(Globals.shoulderInit))
+                .UNSTABLE_addTemporalMarkerOffset(-0.2, ()->Outtake.ArmServo(Globals.ArmPick))
+                .UNSTABLE_addTemporalMarkerOffset(-0.1,()-> Outtake.setServoShoulder(Globals.shoulderPick))
+                .waitSeconds(0.1)
+                .UNSTABLE_addTemporalMarkerOffset(0,()->Outtake.gripCloseBoth())
+
+
+                // todo write command to drop yellow
+
+                .lineToLinearHeading(new Pose2d(47,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
+
+                // DROPPING SEQ
+                .UNSTABLE_addTemporalMarkerOffset(-0.4,()-> Outtake.ArmServo(0.875))
+                .UNSTABLE_addTemporalMarkerOffset(-0.4,()-> Outtake.rotatePreDrop())
+                .waitSeconds(0.1)
+                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> {Outtake.setServoShoulder(0.2177);Elevator.extendTo(Globals.lifterFive,1);})
+                .UNSTABLE_addTemporalMarkerOffset(0, ()-> Outtake.ArmServo(0.4466))
+                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Outtake.setSwitchPixel(Globals.switchPixelDrop))
+                .UNSTABLE_addTemporalMarkerOffset(-0.2, ()->Outtake.rotateDrop())// change this
+                .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> robot.flappers.setPosition(Globals.flapperClose))
+                .addTemporalMarker(()-> {;Outtake.setRotate(0.7355);Outtake.setSwitchPixel(0.2966);})
+                //2 pxl dropped
+                .lineToLinearHeading(new Pose2d(47.5001,48.55,Math.toRadians(-35)))   // TODO (AT BACKDROP)
+                .waitSeconds(0.15)
+                .addTemporalMarker(()-> Outtake.gripOpenBoth())
+                .waitSeconds(0.15)
+                .addTemporalMarker(()->{Outtake.setSwitchPixel(Globals.switchPixelInit);})
+                .addTemporalMarker(()->{Outtake.shoulderInit();Outtake.rotateInit();Intake.stackInit();})
+                .addTemporalMarker(()->Elevator.extendTo(Globals.lifterDown,1))
+                .waitSeconds(0.01)
  */
 
 

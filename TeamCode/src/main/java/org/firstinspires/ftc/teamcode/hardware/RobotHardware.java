@@ -4,6 +4,8 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -51,6 +53,11 @@ public class RobotHardware {
     //Todo ========================================================= Navx ===================================================================
     NavxMicroNavigationSensor Navx;
     IntegratingGyroscope gyro;
+
+    //Todo ========================================================= BEAM Breaker ===================================================================
+    public DigitalChannel beam1=null;
+    public  DigitalChannel beam2=null;
+
 
 
     //Todo ========================================================= Robot Setup ===================================================================
@@ -107,12 +114,20 @@ public class RobotHardware {
         sensorColor1 = hardwareMap.get(RevColorSensorV3.class, "cs1");
         sensorColor2 = hardwareMap.get(RevColorSensorV3.class, "cs2");
 
+        //Todo ========================================================= BEAM Breaker ===================================================================
+        beam1=hardwareMap.get(DigitalChannel.class,"beam1");
+        beam2=hardwareMap.get(DigitalChannel.class,"beam2");
+
         //Todo ========================================================= Setting Mode for all the Actuators ===================================================================
+//        leftElevator.setDirection(DcMotorSimple.Direction.REVERSE);
         leftElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightElevator.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         IntakeExtensionLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightElevator.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+
 
     }
 }

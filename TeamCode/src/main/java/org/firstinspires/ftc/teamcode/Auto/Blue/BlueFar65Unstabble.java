@@ -121,7 +121,7 @@ public class BlueFar65Unstabble extends LinearOpMode {
 
                 // TODO DROPPING THE PURPLE PIXEL
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()->Outtake.setServoShoulder(0.14))
-                .UNSTABLE_addTemporalMarkerOffset(-0.4, ()->Elevator.extendTo(-419, 0.8))
+                .UNSTABLE_addTemporalMarkerOffset(-0.4, ()->Elevator.extendTo(-119, 0.8)) // -419
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Outtake.ArmServo(0.3788))
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Outtake.rotateInit())
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> Outtake.gripOpenBoth())
@@ -188,7 +188,7 @@ public class BlueFar65Unstabble extends LinearOpMode {
                 .waitSeconds(0.1)
                 .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Outtake.setServoShoulder(Globals.shoulderDrop))
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> Outtake.ArmServo(Globals.ArmDrop))
-                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Outtake.setSwitchPixel(Globals.switchPixelDrop))
+                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Outtake.setSwitchPixel(Globals.switchPixelRight))
                 .UNSTABLE_addTemporalMarkerOffset(-0.2, ()->Outtake.rotateDrop())
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Intake.setIntakeServo(0))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> robot.flappers.setPosition(Globals.flapperClose))
@@ -197,9 +197,9 @@ public class BlueFar65Unstabble extends LinearOpMode {
 
 // TODO ========================== DROPPING THE YELLOW AND WHITE PIXEL ==========================================================
 
-                .lineToConstantHeading(new Vector2d(51.5,34))   // TODO (AT BACKDROP)
+                .lineToConstantHeading(new Vector2d(51.5,31))   // TODO (AT BACKDROP)
                 .addTemporalMarker(()-> Outtake.gripOpenBoth())
-                .waitSeconds(0.2)
+                .waitSeconds(0.1)
                 .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Extension.Extension(0,1))
 
@@ -237,7 +237,6 @@ public class BlueFar65Unstabble extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Intake.setIntakeServo(Globals.stackDown))
                 .waitSeconds(0.5)
 
-                .addTemporalMarker(()-> detect())
                 .lineToLinearHeading(new Pose2d(-38, 57, 0))
                 .resetConstraints()
                 .UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> Intake.intakeStart(0.6))
@@ -288,7 +287,6 @@ public class BlueFar65Unstabble extends LinearOpMode {
                 .waitSeconds(0.2)
                 .UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> Elevator.extendTo(Globals.lifterDown,1))
                 .waitSeconds(0.2)
-//                .UNSTABLE_addTemporalMarkerOffset(-()-> Intake.setIntakeServo(Globals.stackInit))
                 .UNSTABLE_addTemporalMarkerOffset(-0.4,()-> Outtake.ArmServo(Globals.ArmInit))
 
 
@@ -329,10 +327,11 @@ public class BlueFar65Unstabble extends LinearOpMode {
                 .waitSeconds(0.3)
 
 
+                // rePlunging
                 .lineToConstantHeading(new Vector2d(-45, 45))
                 .UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> Intake.intakeStart(0.5))
 
-                .lineToConstantHeading(new Vector2d(-55, 38))
+                .lineToConstantHeading(new Vector2d(-55, 40))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()->Elevator.extendTo(0, 1))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1,()-> Outtake.setServoShoulder(Globals.shoulderInit))
                 .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> Intake.rollOutside(0.9))
@@ -343,7 +342,6 @@ public class BlueFar65Unstabble extends LinearOpMode {
 
 
                 // todo write trajectories to the backdrop
-                .addTemporalMarker(()-> detect())
 
                 .lineToLinearHeading(new Pose2d(-35, 57, 0))
                 .UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> Intake.intakeStart(0.5))
@@ -371,7 +369,7 @@ public class BlueFar65Unstabble extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(0,()->Outtake.gripCloseBoth())
 
 
-                .lineToConstantHeading(new Vector2d(48,28))   // TODO (AT BACKDROP)
+                .lineToConstantHeading(new Vector2d(48,30))   // TODO (AT BACKDROP)
 
                 // DROPPING SEQ
                 .UNSTABLE_addTemporalMarkerOffset(-0.4,()-> Outtake.ArmServo(0.875))
@@ -379,7 +377,7 @@ public class BlueFar65Unstabble extends LinearOpMode {
                 .waitSeconds(0.1)
                 .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Outtake.setServoShoulder(Globals.shoulderDrop))
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> Outtake.ArmServo(Globals.ArmDrop))
-                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Outtake.setSwitchPixel(Globals.switchPixelDrop))
+                .UNSTABLE_addTemporalMarkerOffset(-0.3, ()-> Outtake.setSwitchPixel(Globals.switchPixelLeft))
                 .UNSTABLE_addTemporalMarkerOffset(-0.2, ()->Outtake.rotateDrop())
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Intake.setIntakeServo(0))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> robot.flappers.setPosition(Globals.flapperClose))
@@ -388,9 +386,9 @@ public class BlueFar65Unstabble extends LinearOpMode {
 
 // TODO ========================== DROPPING THE YELLOW AND WHITE PIXEL ==========================================================
 
-                .lineToConstantHeading(new Vector2d(53,24))   // TODO (AT BACKDROP)
+                .lineToConstantHeading(new Vector2d(53,26))   // TODO (AT BACKDROP)
                 .addTemporalMarker(()-> Outtake.gripOpenBoth())
-                .waitSeconds(0.2)
+                .waitSeconds(0.1)
                 .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Extension.Extension(0,1))
 
@@ -439,7 +437,6 @@ public class BlueFar65Unstabble extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(24, 57))
 
                 // TRANSFER SEQUENCE
-//                .UNSTABLE_addTemporalMarkerOffset(-0.8, ()-> Intake.intakeStart(0.6))
                 .UNSTABLE_addTemporalMarkerOffset(-0.6, ()-> Intake.setIntakeServo(Globals.stackDown))
                 .UNSTABLE_addTemporalMarkerOffset(-0.6,()-> Outtake.setServoShoulder(Globals.shoulderSafePick))
                 .UNSTABLE_addTemporalMarkerOffset(-0.6,()-> Outtake.setSwitchPixel(Globals.switchPixelInit))
@@ -502,13 +499,13 @@ public class BlueFar65Unstabble extends LinearOpMode {
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()->Outtake.setServoShoulder(0.44))
                 .waitSeconds(0.1)
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()->Outtake.setServoShoulder(0.14))
-                .UNSTABLE_addTemporalMarkerOffset(-0.4, ()->Elevator.extendTo(-419, 0.8))
+                .UNSTABLE_addTemporalMarkerOffset(-0.4, ()->Elevator.extendTo(-319, 0.8))
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Outtake.ArmServo(0.3788))
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Outtake.rotateInit())
 
                 .lineToConstantHeading(new Vector2d(-39, 30))  // Dropping Purple Pixel
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> Outtake.gripOpenBoth())
-                .waitSeconds(0.2)
+                .waitSeconds(0.1)
 
                 // todo Write a command to start intake
                 .lineToConstantHeading(new Vector2d(-53, 33))
@@ -523,21 +520,19 @@ public class BlueFar65Unstabble extends LinearOpMode {
 
                 // RE PLUNGING
                 .lineToConstantHeading(new Vector2d(-45, 45))
-                .UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> Intake.intakeStart(0.5))
+                .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Intake.intakeStart(0.7))
 
                 .lineToConstantHeading(new Vector2d(-53, 33))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()->Elevator.extendTo(0, 1))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1,()-> Outtake.setServoShoulder(Globals.shoulderInit))
                 .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> Intake.rollOutside(0.9))
-                .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Intake.setIntakeServo(Globals.stackThree))
-                .waitSeconds(0.1)
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> Intake.setIntakeServo(Globals.stackDown))
                 .waitSeconds(0.3)
 
                 // todo write trajectories to the backdrop
                 .addTemporalMarker(()-> detect())
                 .lineToConstantHeading(new Vector2d(-35, 57))
-                .UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> Intake.intakeStart(0.6))
+                .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> Intake.intakeStart(0.7))
                 .UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> Intake.setIntakeServo(Globals.stackDown))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Extension.Extension(50,1))
 
@@ -579,7 +574,7 @@ public class BlueFar65Unstabble extends LinearOpMode {
 
 // TODO ========================== DROPPING THE YELLOW AND WHITE PIXEL ==========================================================
 
-                .lineToConstantHeading(new Vector2d(52,38))   // TODO (AT BACKDROP)
+                .lineToConstantHeading(new Vector2d(53,37))   // TODO (AT BACKDROP)
                 .addTemporalMarker(()-> Outtake.gripOpenBoth())
                 .waitSeconds(0.2)
                 .addTemporalMarker(()-> Elevator.extendTo(Globals.lifterDown,1))
@@ -623,7 +618,7 @@ public class BlueFar65Unstabble extends LinearOpMode {
                 .addTemporalMarker(()-> detect())
                 .lineToLinearHeading(new Pose2d(-38, 57, 0))
                 .resetConstraints()
-                .UNSTABLE_addTemporalMarkerOffset(-0.2, ()-> Intake.intakeStart(0.4))
+                .UNSTABLE_addTemporalMarkerOffset(-0.5, ()-> Intake.intakeStart(0.4))
                 .UNSTABLE_addTemporalMarkerOffset(-0.4, ()-> Intake.setIntakeServo(Globals.stackDown))
                 .UNSTABLE_addTemporalMarkerOffset(-0.1, ()-> Extension.Extension(50,1))
 
