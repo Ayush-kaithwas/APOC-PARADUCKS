@@ -47,11 +47,12 @@ public class Globals {
     //Intake values
     public static double flapperOpen=0.88;
     public static double flapperMid=0.358;
-    public static double flapperClose=0.28;// 0.25
+
+    public static double flapperClose=0.2;//0.28B;// 0.25
 
 
     // TODO==========================================================  Shoulder Servo Value ====================================================
-    public static double shoulderInit=0.73;//0.714;//0.8166;
+    public static double shoulderInit=0.745;//0.714;//0.8166;
     public static double shoulderSafePick= 0.7;
     public static double shoulderSafePick1= 0.65;
     public static double shoulderSafePick2= 0.7;
@@ -79,13 +80,13 @@ public class Globals {
     // TODO==========================================================  Left / Right Gripper Servo Value ====================================================
 
     //Gripper
-    public static double leftGripOpen=0.2227;
+    public static double leftGripOpen=0.2727;
     public static double leftGripSafe=0.5205; // Has To Change
-    public static double leftGripClose=0.815;
+    public static double leftGripClose=0.6866;
 
-    public static double rightGripOpen=0.8716;
-    public static double rightGripSafe=0.5401; // Has To Change
-    public static double rightGripClose=0.2038;
+    public static double rightGripOpen=0.7516;
+    public static double rightGripSafe=0.501; // Has To Change
+    public static double rightGripClose=0.2338;
 
 
     // TODO==========================================================  Rotate Servo Value ====================================================

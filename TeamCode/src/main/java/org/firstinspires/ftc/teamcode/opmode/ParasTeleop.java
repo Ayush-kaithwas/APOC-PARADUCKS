@@ -166,8 +166,8 @@ public class ParasTeleop extends CommandOpMode {
 
         // TODO ============================================= Ground Level Intake and Intake OFF =====================================================
         gamepadEx.getGamepadButton(GamepadKeys.Button.B).toggleWhenPressed(
-                new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON),
-                new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_OFF)
+                new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_OFF),
+                new IntakePixel(Intake, IntakeSubsystem.IntakeServoState.INTAKE_DOWN, IntakeSubsystem.RollerIntakeState.INTAKE_ON)
         );
 
 
@@ -360,6 +360,7 @@ public class ParasTeleop extends CommandOpMode {
             isIntake = false;
             isDrop = true;
             extensionFlag = true;
+            beamFlag = false;
         }
 
         // TODO ============================================================== DROPPING SEQUENCE ===========================================================
@@ -628,11 +629,11 @@ public class ParasTeleop extends CommandOpMode {
 
     public void inc(double power){
 
-        robot.leftElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()-35);
+        robot.leftElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()-55);
         robot.leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.leftElevator.setPower(power);
 
-        robot.rightElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()-35);
+        robot.rightElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()-55);
         robot.rightElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightElevator.setPower(power);
     }
@@ -640,11 +641,11 @@ public class ParasTeleop extends CommandOpMode {
 
     public void dec(double power){
 
-        robot.leftElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()+35);
+        robot.leftElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()+55);
         robot.leftElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.leftElevator.setPower(power);
 
-        robot.rightElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()+35);
+        robot.rightElevator.setTargetPosition(robot.leftElevator.getCurrentPosition()+55);
         robot.rightElevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightElevator.setPower(power);
     }
