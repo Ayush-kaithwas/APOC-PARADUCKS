@@ -73,13 +73,19 @@ Paraducks is an advanced FTC (FIRST Tech Challenge) robot developed by Team 2298
 
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/your-username/paraducks-ftc-robot.git
-   cd paraducks-ftc-robot
+   git clone https://github.com/Ayush-kaithwas/APOC-PARADUCKS
+   
 2. Build the code and deploy it to the REV Control Hub using the FTC SDK.
 
 3. Test and calibrate all mechanisms, including intake, transfer, and scoring systems.
 
 4. Run the robot in Autonomous or TeleOp mode via the FTC Driver Station app.
+
+
+## Autonomous Path
+## Media
+- [APOC Autonomous path video](https://drive.google.com/file/d/1P7WGm4k9tnd2-i4wQtGX4WfBMdTFPsm9/view?usp=sharing)
+
 
 ## Acknowledgments
 
